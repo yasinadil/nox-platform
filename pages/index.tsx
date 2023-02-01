@@ -1,11 +1,13 @@
 import Image from "next/image";
 import bgimage from "../assets/bg-main-page.png";
-import Navbar from "../components/Navbar/Navbar.tsx"
+import Navbar from "../components/Navbar/Navbar.tsx";
+import Banner from "../components/Banner/Banner.tsx";
 export default function Home() {
   return (
-    <div className="bg-[url('../assets/bg-main-page.png')] h-[100%] bg-cover bg-no-repeat">
+    <div className="bgclass ">
       <Navbar />
-      <p className="desktop:text-red-700 laptop:text-red-700 mobile:text-white"> dffd</p>
+      <Banner />
+
     </div>
   );
 }

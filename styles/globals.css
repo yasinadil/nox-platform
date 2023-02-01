@@ -10,3 +10,41 @@
   background-repeat: no-repeat;
 } */
 
+.bgclass {
+  background-image: url("../assets/bg-main-page.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+@font-face {
+  font-family: "Lexend";
+  src: url("../assets/Lexend-VariableFont_wght.ttf");
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "LexendLight";
+  src: url("../assets/Lexend-VariableFont_wght.ttf");
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: "LexendUltra";
+  src: url("../assets/Lexend-VariableFont_wght.ttf");
+  font-weight: 200;
+}
+
+body{
+  font-family: "Lexend", sans-serif;
+  color: white;
+}
+
+.title{
+  font-family: "LexendLight", sans-serif;
+  color: white;
+}
+
+.bannerHeading{
+  font-family: "LexendUltra", sans-serif;
+  color: white;
+}
