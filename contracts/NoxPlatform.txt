@@ -1,0 +1,56 @@
+// SPDX-License-Identifier: MIT
+
+import "./NoxSBT.sol";
+pragma solidity ^0.8.17;
+
+contract NoxPlatform is Ownable, ReentrancyGuard {
+
+    NOXSBT public NFTInterface;
+    uint256 public PUBLIC_SALE_PRICE = 0 ether;
+    uint256 public docCount = 0;
+
+    event VideoCreated(
+        uint256 id,
+        string details,
+        string url,
+        address issuer,
+        address owner
+    );
+
+    struct Document {
+        uint256 id;
+        string details;
+        string url;
+        address issuer;
+        address owner;
+    }
+
+    mapping(uint256 => Document) public Documents;
+
+    constructor(address _nftAddress) {
+        NFTInterface = NOXSBT(_nftAddress);
+    }
+
+    function issue(address _to, string memory _details, string memory _url) external payable {
+        require(msg.value >= PUBLIC_SALE_PRICE, "Not enough Ethers sent!");
+        Documents[docCount] = Document(docCount, _details, _url, msg.sender, _to);
+        emit VideoCreated(docCount, _details, _url, msg.sender, _to);
+        docCount++;
+        NFTInterface.mint(_to, _url);
+    }
+
+    // Get all videos
+    function getVideos() public view returns (Document[] memory) {
+        Document[] memory _documents = new Document[](docCount);
+        for (uint256 i = 0; i < docCount; i++) {
+            _documents[i] = Documents[i];
+        }
+        return _documents;
+    }
+    
+
+    function setSalePrice(uint256 _price) external onlyOwner {
+        PUBLIC_SALE_PRICE = _price;
+    }
+
+}

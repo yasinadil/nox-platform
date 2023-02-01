@@ -1,0 +1,68 @@
+// SPDX-License-Identifier: MIT
+pragma solidity >=0.7.0 <0.9.0;
+
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/security/ReentrancyGuard.sol";
+
+contract NOXSBT is ERC721Enumerable, Ownable, ReentrancyGuard {
+    using Address for address;
+    using Strings for uint256;
+
+    uint256 public docCount = 1;
+
+    event DocumentMinted(string url);
+
+    mapping(uint256 => string) public documentsURI;
+
+    constructor() ERC721("Nox SBT", "NDOC") {}
+
+    function mint(address _to, string memory _url)
+        external
+        onlyOwner
+        nonReentrant
+    {
+        documentsURI[docCount] = _url;
+        emit DocumentMinted(_url);
+        docCount++;
+        _safeMint(_to, 1);
+    }
+
+    function tokenURI(uint256 _tokenId)
+        public
+        view
+        virtual
+        override
+        returns (string memory)
+    {
+        require(
+            _exists(_tokenId),
+            "ERC721Metadata: URI query for nonexistent token"
+        );
+        string memory uri = documentsURI[_tokenId];
+        return uri;
+    }
+
+    function walletOfOwner(address _owner)
+        public
+        view
+        returns (uint256[] memory)
+    {
+        uint256 ownerTokenCount = balanceOf(_owner);
+        uint256[] memory tokenIds = new uint256[](ownerTokenCount);
+        for (uint256 i; i < ownerTokenCount; i++) {
+            tokenIds[i] = tokenOfOwnerByIndex(_owner, i);
+        }
+        return tokenIds;
+    }
+
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 firstTokenId,
+        uint256 batchSize
+    ) internal virtual override {
+        require(from == address(0), "Err: token transfer is BLOCKED");
+        super._beforeTokenTransfer(from, to, firstTokenId, batchSize);
+    }
+}
