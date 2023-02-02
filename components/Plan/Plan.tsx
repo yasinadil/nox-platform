@@ -7,7 +7,7 @@ function Plan() {
   return (
     <div className="text-center pb-16">
       <p className="text-4xl pb-16"> Price Plan </p>
-      <div class="grid gap-x-2 gap-y-4 desktop:grid-cols-5 laptop:grid-cols-5 mobile:grid-cols-1">
+      <div className="grid gap-x-2 gap-y-4 desktop:grid-cols-5 laptop:grid-cols-5 mobile:grid-cols-1">
         <div></div>
         <Image
           className="inline mx-auto my-auto"
