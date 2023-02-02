@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+<<<<<<< HEAD
 function Sidebar() {
   return (
     <div className="bg-[#120F22] grid grid-cols-5 gap-4 h-screen">
