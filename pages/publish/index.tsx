@@ -1,4 +1,4 @@
-import Sidebar from "../../page2comp/Sidebar/Sidebar";
+import Sidebar from "../../components/Sidebar/Sidebar";
 
 function Publish() {
   return (
