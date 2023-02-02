@@ -1,6 +1,7 @@
 import Image from "next/image";
 import polygon from "../../assets/polygon.png";
 import guide from "../../assets/guide.png";
+
 function Banner() {
   return (
 
