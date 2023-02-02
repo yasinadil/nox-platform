@@ -22,7 +22,7 @@ function Banner() {
             alt="polygon"
           />
         </div>
-        <div className="desktop:py-12 mobile:py-24 text-center">
+        <div className="desktop:py-24 mobile:py-24 text-center">
           <p className="desktop:text-2xl mobile:text-xl font-semibold pb-4">
             Visit our guide series to learn how to use the DApp
           </p>
