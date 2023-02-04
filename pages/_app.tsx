@@ -1,6 +1,102 @@
-import '@/styles/globals.css'
-import type { AppProps } from 'next/app'
+import "@/styles/globals.css";
+import "@rainbow-me/rainbowkit/styles.css";
+import type { AppProps } from "next/app";
+import {
+  RainbowKitProvider,
+  getDefaultWallets,
+  Theme,
+} from "@rainbow-me/rainbowkit";
+import { configureChains, createClient, WagmiConfig } from "wagmi";
+import { mainnet, polygon, optimism, arbitrum, goerli } from "wagmi/chains";
+import { alchemyProvider } from "wagmi/providers/alchemy";
+import { publicProvider } from "wagmi/providers/public";
 
-export default function App({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />
+const myCustomTheme: Theme = {
+  blurs: {
+    modalOverlay: "blur(5px)",
+  },
+  colors: {
+    accentColor: "#5AABFF",
+    accentColorForeground: "#ffffff",
+    actionButtonBorder: "#00000000",
+    actionButtonBorderMobile: "#00000000",
+    actionButtonSecondaryBackground: "...",
+    closeButton: "#FF7A01",
+    closeButtonBackground: "...",
+    connectButtonBackground: "#5AABFF",
+    connectButtonBackgroundError: "#5AABFF",
+    connectButtonInnerBackground: "...",
+    connectButtonText: "...",
+    connectButtonTextError: "...",
+    connectionIndicator: "...",
+    downloadBottomCardBackground: "...",
+    downloadTopCardBackground: "...",
+    error: "...",
+    generalBorder: "#00000000",
+    generalBorderDim: "#00000000",
+    menuItemBackground: "#FF7A01",
+    modalBackdrop: "...",
+    modalBackground: "#120F22",
+    modalBorder: "#8347E6",
+    modalText: "#8347E6",
+    modalTextDim: "...",
+    modalTextSecondary: "#5AABFF",
+    profileAction: "#00000000",
+    profileActionHover: "...",
+    profileForeground: "...",
+    selectedOptionBorder: "#5AABFF",
+    standby: "...",
+  },
+  fonts: {
+    body: "Lexend",
+  },
+  radii: {
+    actionButton: "12px",
+    connectButton: "10px",
+    menuButton: "8px",
+    modal: "8px",
+    modalMobile: "10px",
+  },
+  shadows: {
+    connectButton: "...",
+    dialog: "...",
+    profileDetailsAction: "...",
+    selectedOption: "...",
+    selectedWallet: "...",
+    walletLogo: "...",
+  },
+};
+
+const { chains, provider, webSocketProvider } = configureChains(
+  [goerli],
+  [
+    alchemyProvider({
+      apiKey: process.env.alchemyAPI ?? "",
+    }),
+    publicProvider(),
+  ]
+);
+
+const { connectors } = getDefaultWallets({
+  appName: "Nox Platform",
+  chains,
+});
+
+const wagmiClient = createClient({
+  autoConnect: true,
+  connectors,
+  provider,
+  webSocketProvider,
+});
+
+function MyApp({ Component, pageProps }: AppProps) {
+  return (
+    <WagmiConfig client={wagmiClient}>
+      <RainbowKitProvider theme={myCustomTheme} chains={chains}>
+        <Component {...pageProps} />
+      </RainbowKitProvider>
+    </WagmiConfig>
+  );
 }
+
+export default MyApp;

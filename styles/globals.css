@@ -55,3 +55,8 @@ body{
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.125);
 }
+
+@media only screen and (max-width: 600px) {
+  .hide-mobile 
+  {display:none;}
+ }

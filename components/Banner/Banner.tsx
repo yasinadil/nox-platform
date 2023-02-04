@@ -31,6 +31,7 @@ function Banner() {
             className="inline"
             style={{width:"80vh"}}
             src={guide}
+            priority={true}
             alt="guide"
           />
         </div>
