@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Link from "next/link";
+import { Web3Storage } from "web3.storage";
 import Image from "next/image";
 import IssueDApp from "../../components/IssueDApp/IssueDApp";
 import upload from "../../assets/upload.png";
@@ -11,7 +12,7 @@ import etherscan from "../../assets/etherscan.png";
 
 function Issue() {
   return (
-    <div className="bg-[#120F22] grid desktop:grid-cols-5 mobile:grid-cols-5 desktop:gap-4 mobile:gap-0 h-screen">
+    <div className="bg-[#120F22] grid desktop:grid-cols-5 mobile:grid-cols-5 desktop:gap-4 mobile:gap-0">
       <div className="text-center border-r-2 border-[#7000FF]">
         <div className="desktop:col-span-1 mobile:col-span-2">
           <div className="desktop:py-24 mobile:py-20">
@@ -30,7 +31,7 @@ function Issue() {
                   Swap
                 </Link>
               </li>
-              <li className="border-t-2 border-[#7000FF]">
+              <li className="border-t-2 border-b-2 border-[#7000FF]">
                 <Link
                   href="/issue"
                   className="flex cursor-pointer justify-center py-3 bg-[#2E2BC9]"
@@ -38,18 +39,10 @@ function Issue() {
                   Issue
                 </Link>
               </li>
-              <li className="border-t-2 border-b-2 border-[#7000FF]">
-                <Link
-                  href="/verify"
-                  className="flex cursor-pointer justify-center py-3 bg-transparent"
-                >
-                  Verify
-                </Link>
-              </li>
             </ul>
           </div>
         </div>
-        <div className="flex justify-center desktop:mt-[30vh] laptop:mt-[16vh] mobile:mt-12">
+        <div className="flex justify-center desktop:mt-[20vh] laptop:mt-[16vh] mobile:mt-12">
           <Image className="" style={{ width: "12vh" }} src={logo} alt="logo" />
         </div>
         <div className="mt-6 desktop:visible mobile:invisible">
@@ -82,6 +75,7 @@ function Issue() {
           />
         </div>
       </div>
+
       <IssueDApp />
     </div>
   );

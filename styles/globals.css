@@ -29,8 +29,7 @@
 
 @font-face {
   font-family: "LexendUltra";
-  src: url("../assets/Lexend-VariableFont_wght.ttf");
-  font-weight: 200;
+  src: url("../assets/Fontspring-DEMO-lupio-black.otf");
 }
 
 body{
@@ -46,6 +45,7 @@ body{
 .bannerHeading{
   font-family: "LexendUltra", sans-serif;
   color: white;
+  line-height: 1.6;
 }
 
 .buyBg {
@@ -59,4 +59,34 @@ body{
 @media only screen and (max-width: 600px) {
   .hide-mobile 
   {display:none;}
+
+  .spin-mobile{
+    /* transform: rotateX(20deg); */
+    transform:  skew(-15deg) scale(0.3);
+  }
  }
+
+ @media only screen and (min-width: 600px) {
+  .hide-laptop 
+  {display:none;}
+ }
+
+ .glassEffect {
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  background-color: rgba(17, 25, 40, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.125);
+}
+
+@keyframes spin {
+  from { transform: rotateY(0deg); }
+  to { transform: rotateY(360deg); }
+}
+.spinning {
+  animation: spin 3s infinite;
+}
+
+.spin-image{
+  /* transform: rotateX(20deg); */
+  transform:  skew(-15deg) scale(0.5);
+}
