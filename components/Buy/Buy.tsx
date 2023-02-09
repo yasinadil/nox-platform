@@ -209,104 +209,96 @@ function Buy() {
         pauseOnHover
         theme="light"
       />
-      <div className="hero bg-[#120F22]">
-        <div className="hero-content min-h-screen">
-          <div className="flex justify-center">
-            <div className="bg-[#1F1C32] border-4 border-[#8E00FE] desktop:px-16 mobile:px-3 desktop:py-16 tablet:py-8 mobile:py-16 rounded-3xl">
-              <p className="text-center pb-8 font-semibold desktop:text-2xl laptop:text-2xl tablet:text-xl mobile:text-xl">
-                Swap WETH to NOX
-              </p>
-              <form onSubmit={(event) => swap(event)}>
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text text-white">Enter amount</span>
-                  </label>
-                  <label className="input-group">
-                    <input
-                      type="number"
-                      step={0.000001}
-                      max={userBalance}
-                      placeholder="Enter amount"
-                      required
-                      className="input input-bordered text-black"
-                      onChange={(e) => {
-                        if (
-                          e.target.value != "" &&
-                          Number(e.target.value) > 0
-                        ) {
-                          const val = e.target.value;
-                          const valBig = ethers.utils.parseEther(val);
-                          setFromAmount(valBig.toString());
-                          const delayDebounce = setTimeout(() => {
-                            getPrice(valBig.toString());
-                          }, 1000);
-                        }
-                      }}
-                    />
-                    <span className="text-gray-700">WETH</span>
-                  </label>
-                  <label className="label">
-                    <span className="label-text-alt text-white">
-                      Balance: {userBalance}
-                    </span>
-                  </label>
-                </div>
-                <div className="flex justify-center pt-8 pb-4">
-                  <Image
-                    className=""
-                    style={{ width: "4vh" }}
-                    src={arrow}
-                    alt="polygon"
-                  />
-                </div>
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text text-white">Enter amount</span>
-                  </label>
-                  <label className="input-group">
-                    <input
-                      type="text"
-                      placeholder="0"
-                      value={swapValue}
-                      readOnly
-                      className="input input-bordered text-black"
-                    />
-                    <span className="text-gray-700">&nbsp;NOX&nbsp;</span>
-                  </label>
-                  <label className="label">
-                    <span className="label-text-alt text-white">
-                      Balance: {noxTokenBalance}
-                    </span>
-                  </label>
-                </div>
-                <div className="flex justify-center mt-8">
-                  {approving && (
-                    <button className="btn loading">Approving...</button>
-                  )}
-                  {swapping && (
-                    <button className="btn loading">Swapping...</button>
-                  )}
-                  {!swapping && !approving && (
-                    <button
-                      type="submit"
-                      className="px-16 py-3 bg-white text-black rounded-xl text-center"
-                    >
-                      {" "}
-                      Buy{" "}
-                    </button>
-                  )}
-                </div>
-              </form>
-              <div className="pt-8">
-                <div>
-                  <span>Estimated Gas </span>
-                  <span className="float-right">{estGas}</span>
-                </div>
-                <div>
-                  <span>Liquidity Provider </span>
-                  <span className="float-right">{liqProvider}</span>
-                </div>
-              </div>
+
+      <div className="flex justify-center">
+        <div className="border-4 border-[#8E00FE] desktop:px-16 mobile:px-3 desktop:py-16 tablet:py-8 mobile:py-16 rounded-3xl">
+          <p className="text-center pb-8 font-semibold desktop:text-2xl laptop:text-2xl tablet:text-xl mobile:text-xl">
+            Swap WETH to NOX
+          </p>
+          <form onSubmit={(event) => swap(event)}>
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text text-white">Enter amount</span>
+              </label>
+              <label className="input-group">
+                <input
+                  type="number"
+                  step={0.000001}
+                  max={userBalance}
+                  placeholder="Enter amount"
+                  required
+                  className="input input-bordered text-black"
+                  onChange={(e) => {
+                    if (e.target.value != "" && Number(e.target.value) > 0) {
+                      const val = e.target.value;
+                      const valBig = ethers.utils.parseEther(val);
+                      setFromAmount(valBig.toString());
+                      const delayDebounce = setTimeout(() => {
+                        getPrice(valBig.toString());
+                      }, 1000);
+                    }
+                  }}
+                />
+                <span className="text-gray-700">WETH</span>
+              </label>
+              <label className="label">
+                <span className="label-text-alt text-white">
+                  Balance: {userBalance}
+                </span>
+              </label>
+            </div>
+            <div className="flex justify-center pt-8 pb-4">
+              <Image
+                className=""
+                style={{ width: "4vh" }}
+                src={arrow}
+                alt="polygon"
+              />
+            </div>
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text text-white">Enter amount</span>
+              </label>
+              <label className="input-group">
+                <input
+                  type="text"
+                  placeholder="0"
+                  value={swapValue}
+                  readOnly
+                  className="input input-bordered text-black"
+                />
+                <span className="text-gray-700">&nbsp;NOX&nbsp;</span>
+              </label>
+              <label className="label">
+                <span className="label-text-alt text-white">
+                  Balance: {noxTokenBalance}
+                </span>
+              </label>
+            </div>
+            <div className="flex justify-center mt-8">
+              {approving && (
+                <button className="btn loading">Approving...</button>
+              )}
+              {swapping && <button className="btn loading">Swapping...</button>}
+              {!swapping && !approving && (
+                <button
+                  type="submit"
+                  className="px-16 py-3 bg-white text-black rounded-xl text-center"
+                >
+                  {" "}
+                  Buy{" "}
+                </button>
+              )}
+            </div>
+          </form>
+          <div className="pt-8">
+            <div>
+              <span>Estimated Gas </span>
+              <span className="float-right">{estGas}</span>
+            </div>
+            <div>
+              <span>Liquidity Provider </span>
+              <span className="float-right">{liqProvider}</span>
             </div>
           </div>
         </div>

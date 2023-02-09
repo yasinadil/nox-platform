@@ -163,7 +163,7 @@ function Issue() {
             />
 
             <form className="" onSubmit={(e) => handleSubmit(e)}>
-              <h1 className="text-center pb-6 desktop:text-2xl mobile:text-base">
+              <h1 className="text-center py-3 desktop:text-2xl mobile:text-base bannerHeading">
                 Issue Document to User
               </h1>
               <div className="desktop:px-12 mobile:px-3 pt-4 pb-6 bg-[#181527] desktop:mx-0 mobile:mx-6">
