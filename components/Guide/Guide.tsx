@@ -8,7 +8,7 @@ function Guide() {
         <div className="">
           <Image
             className="inline"
-            style={{ width: "80vh" }}
+            style={{ width: "140vh" }}
             src={guide}
             priority={true}
             alt="guide"
