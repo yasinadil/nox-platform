@@ -14,57 +14,52 @@ import degree from "../../assets/degree.png";
 const noxSbtABI = require("../../components/ABI/noxSbtABI.json");
 
 function Account() {
-  const [tokensOwned, setTokensOwned] = useState([]);
+  const [tokensOwned, setTokensOwned] = useState<number[]>([]);
   const [tokens, setTokens] = useState("");
-  const [nfts, setNfts] = useState([]);
+  const [nfts, setNfts] = useState<object[]>([]);
   const [loading, isLoading] = useState(true);
   const router = useRouter();
   const w_address = router.query;
-  let walletAddress = w_address.address;
+
+  let walletAddress: any = w_address.address!;
   console.log(walletAddress);
 
   useEffect(() => {
     if (walletAddress != undefined) {
-      async function loadNftData() {
-        const provider = new ethers.providers.JsonRpcProvider(
-          `https://eth-goerli.g.alchemy.com/v2/${process.env.alchemyAPI}`
-        );
-        const sbtContract = new ethers.Contract(
-          noxNFTAddress,
-          noxSbtABI,
-          provider
-        );
-        const owned: number[] = await sbtContract.walletOfOwner(walletAddress);
-        setTokensOwned(owned);
-        console.log(owned);
-        if (owned.length == 0) {
-          setTokens("0");
-        }
-        for (let i = 0; i < owned.length; i++) {
-          let url = await sbtContract.tokenURI(Number(owned[i]));
-          console.log(url);
-
-          if (url.startsWith("ipfs://")) {
-            url = `https://w3s.link/ipfs/${url.split("ipfs://")[1]}`;
-          }
-          const TokenMetadata = await fetch(url).then((response) =>
-            response.json()
-          );
-          let TokenImage = TokenMetadata.image;
-          let TokenName = TokenMetadata.name;
-          if (TokenImage.startsWith("ipfs://")) {
-            TokenImage = `https://w3s.link/ipfs/${
-              TokenImage.split("ipfs://")[1]
-            }`;
-          }
-
-          setNfts((nfts) => [...nfts, { name: TokenName, img: TokenImage }]);
-        }
-        isLoading(false);
-      }
       loadNftData();
     }
   }, [walletAddress]);
+
+  async function loadNftData() {
+    const provider = new ethers.providers.JsonRpcProvider(
+      `https://eth-goerli.g.alchemy.com/v2/${process.env.alchemyAPI}`
+    );
+    const sbtContract = new ethers.Contract(noxNFTAddress, noxSbtABI, provider);
+    const owned: number[] = await sbtContract.walletOfOwner(walletAddress);
+    setTokensOwned(owned);
+    if (owned.length == 0) {
+      setTokens("0");
+    }
+    for (let i = 0; i < owned.length; i++) {
+      let url = await sbtContract.tokenURI(Number(owned[i]));
+      console.log(url);
+
+      if (url.startsWith("ipfs://")) {
+        url = `https://w3s.link/ipfs/${url.split("ipfs://")[1]}`;
+      }
+      const TokenMetadata = await fetch(url).then((response) =>
+        response.json()
+      );
+      let TokenImage = TokenMetadata.image;
+      let TokenName = TokenMetadata.name;
+      if (TokenImage.startsWith("ipfs://")) {
+        TokenImage = `https://w3s.link/ipfs/${TokenImage.split("ipfs://")[1]}`;
+      }
+
+      setNfts((nfts) => [...nfts, { name: TokenName, img: TokenImage }]);
+    }
+    isLoading(false);
+  }
 
   return (
     <div className="bg-[#120F22]">
@@ -105,7 +100,7 @@ function Account() {
           )}
           {nfts.length > 0 && (
             <div className="desktop:grid desktop:grid-cols-6 laptop:grid laptop:grid-cols-4 mobile:grid mobile:grid-cols-2 tablet:flex tablet:flex-grow tablet:flex-wrap tablet:gap-x-4 tablet:gap-y-8 mobile:gap-x-4 mobile:gap-y-8">
-              {nfts.map((data, index) => {
+              {nfts.map((data: any, index) => {
                 return (
                   <div
                     key={index}

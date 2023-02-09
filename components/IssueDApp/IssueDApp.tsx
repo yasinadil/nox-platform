@@ -35,7 +35,7 @@ function Issue() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (fileState.length == 0) {
+    if (fileState == null) {
       console.log("no");
       toast.error("No file uploaded", {
         position: "top-right",
@@ -58,12 +58,13 @@ function Issue() {
         const [name, url] = data;
         console.log(name);
         console.log(url);
-
-        await toast.promise(handleMint(fileDesc, issueeWallet, url), {
-          pending: "Minting your Document into an NFT... ⏳",
-          success: "NFT Minted! 🎉",
-          error: "Something went wrong! 😢",
-        });
+        if (url) {
+          await toast.promise(handleMint(fileDesc, issueeWallet, url), {
+            pending: "Minting your Document into an NFT... ⏳",
+            success: "NFT Minted! 🎉",
+            error: "Something went wrong! 😢",
+          });
+        }
       }
     }
   };
@@ -75,28 +76,34 @@ function Issue() {
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDRiQmQzZDMzMzgyRjZjNTI0MDRlMTIyN2RDMUQ3MThhMkU2NGNEMDkiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NzE4Njk3NDUxNzAsIm5hbWUiOiJWaWRQbGF0Zm9ybSJ9.oT3kpjykVBtosuiy65avTpR0Nicy3aDqgkNzthO91Mg",
     });
     try {
-      const rootCid = await client.put(fileState, { wrapWithDirectory: false });
-      console.log("CID" + rootCid);
-      const url = "ipfs://" + rootCid + "/";
-      const obj = {
-        name: fileName,
-        description: fileDesc,
-        issuer: address,
-        issuee: issueeWallet,
-        date: Math.floor(Date.now() / 1000),
-        image: url,
-      };
-      const blob = new Blob([JSON.stringify(obj)], {
-        type: "application/json",
-      });
+      if (fileState != null) {
+        const rootCid = await client.put(fileState, {
+          wrapWithDirectory: false,
+        });
+        console.log("CID" + rootCid);
+        const url = "ipfs://" + rootCid + "/";
+        const obj = {
+          name: fileName,
+          description: fileDesc,
+          issuer: address,
+          issuee: issueeWallet,
+          date: Math.floor(Date.now() / 1000),
+          image: url,
+        };
+        const blob = new Blob([JSON.stringify(obj)], {
+          type: "application/json",
+        });
 
-      const metadataFile = [new File([blob], "metadata.json")];
-      const cid = await client.put(metadataFile, { wrapWithDirectory: false });
-      console.log("metadatfile cid " + " " + cid);
+        const metadataFile = [new File([blob], "metadata.json")];
+        const cid = await client.put(metadataFile, {
+          wrapWithDirectory: false,
+        });
+        console.log("metadatfile cid " + " " + cid);
 
-      const urlMeta = "ipfs://" + cid + "/";
-      return [name, urlMeta];
-    } catch (error) {
+        const urlMeta = "ipfs://" + cid + "/";
+        return [name, urlMeta];
+      }
+    } catch (error: any) {
       let message = error.reason;
       toast.error(message, {
         position: "top-right",
@@ -119,9 +126,22 @@ function Issue() {
     const provider = new ethers.providers.Web3Provider(window.ethereum as any);
     const signer = provider.getSigner();
     let contract = new ethers.Contract(noxPlatform, noxPlatformABI, signer);
-
-    const response = await contract.issue(issuee, fileDesc, url);
-    const wait = await provider.waitForTransaction(response.hash);
+    try {
+      const response = await contract.issue(issuee, fileDesc, url);
+      const wait = await provider.waitForTransaction(response.hash);
+    } catch (error: any) {
+      let message = error.reason;
+      toast.error(message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
   };
 
   return (
@@ -213,7 +233,7 @@ function Issue() {
                     className="textarea textarea-bordered h-24 text-white bg-transparent border-white"
                     placeholder="Description..."
                     onChange={(e) =>
-                      setFileDesc((e.target as HTMLInputElement).value)
+                      setFileDesc((e.target as HTMLTextAreaElement).value)
                     }
                     required
                   ></textarea>

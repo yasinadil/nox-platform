@@ -12,7 +12,7 @@ function Navbar() {
   const { address, isConnected } = useAccount();
 
   useEffect(() => {
-    if (isConnected) {
+    if (isConnected && address != undefined) {
       setUserAddress(address);
     }
   }, [isConnected, address]);

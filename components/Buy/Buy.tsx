@@ -102,7 +102,7 @@ function Buy() {
       await swapOrders.orders.find((item) => {
         setLiqProvider(item.source);
       });
-    } catch (error) {
+    } catch (error: any) {
       setLiqProvider("Pool Not Available");
     }
     var rawvalue = swapOrders.buyAmount / 10 ** 18;
@@ -180,7 +180,7 @@ function Buy() {
           theme: "light",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       let message = error.reason;
       toast.error(message, {
         position: "top-right",
