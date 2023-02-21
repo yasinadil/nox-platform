@@ -72,7 +72,7 @@ function Issue() {
   const getCid = async () => {
     // Construct with token and endpoint
     const client = new Web3Storage({
-      token: process.env.NEXT_PUBLIC_WEB3_STORAGE_TOKEN,
+      token: process.env.NEXT_PUBLIC_WEB3_STORAGE_TOKEN!,
     });
     try {
       if (fileState != null) {
