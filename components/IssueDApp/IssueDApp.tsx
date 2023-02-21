@@ -72,8 +72,7 @@ function Issue() {
   const getCid = async () => {
     // Construct with token and endpoint
     const client = new Web3Storage({
-      token:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDRiQmQzZDMzMzgyRjZjNTI0MDRlMTIyN2RDMUQ3MThhMkU2NGNEMDkiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NzE4Njk3NDUxNzAsIm5hbWUiOiJWaWRQbGF0Zm9ybSJ9.oT3kpjykVBtosuiy65avTpR0Nicy3aDqgkNzthO91Mg",
+      token: process.env.NEXT_PUBLIC_WEB3_STORAGE_TOKEN,
     });
     try {
       if (fileState != null) {
