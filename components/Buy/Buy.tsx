@@ -26,7 +26,7 @@ function Buy() {
   const zeroxapi = "https://goerli.api.0x.org";
 
   const settings = {
-    apiKey: process.env.alchemyAPI,
+    apiKey: process.env.NEXT_PUBLIC_AlchemyAPI,
     network: Network.ETH_GOERLI,
   };
 
@@ -37,7 +37,7 @@ function Buy() {
       getNOXBalance();
       getWETHBalance();
     }
-  }, [isConnected]);
+  }, [isConnected, address]);
 
   const getNOXBalance = async () => {
     if (address != undefined) {

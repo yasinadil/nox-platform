@@ -71,7 +71,7 @@ const { chains, provider, webSocketProvider } = configureChains(
   [goerli],
   [
     alchemyProvider({
-      apiKey: process.env.alchemyAPI ?? "",
+      apiKey: process.env.NEXT_PUBLIC_AlchemyAPI ?? "",
     }),
     publicProvider(),
   ]

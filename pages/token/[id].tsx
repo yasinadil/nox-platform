@@ -34,7 +34,7 @@ function NFTPage() {
 
   async function loadNftData() {
     const provider = new ethers.providers.JsonRpcProvider(
-      `https://eth-goerli.g.alchemy.com/v2/${process.env.alchemyAPI}`
+      `https://eth-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_AlchemyAPI}`
     );
     const sbtContract = new ethers.Contract(noxNFTAddress, noxSbtABI, provider);
     let url = await sbtContract.tokenURI(Number(tokenId.id));
