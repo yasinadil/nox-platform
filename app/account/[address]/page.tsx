@@ -1,42 +1,46 @@
-import { useRouter } from "next/router";
+"use client";
+import { useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import { noxNFTAddress } from "../../Config";
+import { noxNFTAddress } from "../../../Config";
 import { ethers, BigNumber } from "ethers";
 import { useAccount } from "wagmi";
 import truncateEthAddress from "truncate-eth-address";
-import Navbar from "../../components/Navbar/Navbar";
-import Footer from "../../components/Footer/Footer";
+import Navbar from "../../../components/Navbar/Navbar";
+import Footer from "../../../components/Footer/Footer";
 import Link from "next/link";
 import Image from "next/image";
-import avatar from "../../assets/avatar.png";
-import degree from "../../assets/degree.png";
-import placeholderImg from "../../assets/img-placeholder.png";
+import avatar from "../../../assets/avatar.png";
+import degree from "../../../assets/degree.png";
+import placeholderImg from "../../../assets/img-placeholder.png";
 
-const noxSbtABI = require("../../components/ABI/noxSbtABI.json");
+const noxSbtABI = require("/components/ABI/noxSbtABI.json");
 
-function Account() {
+function Account({ params }: any) {
   const [tokensOwned, setTokensOwned] = useState<number[]>([]);
   const [tokens, setTokens] = useState("");
   const [nfts, setNfts] = useState<object[]>([]);
   const [loading, isLoading] = useState(true);
-  const router = useRouter();
-  const w_address = router.query;
-
-  let walletAddress: any = w_address.address!;
-  console.log(walletAddress);
+  const [walletAddress, setWalletAddress] = useState("");
+  const w_address = params.address;
+  console.log(w_address);
+  const { address, isConnected } = useAccount();
 
   useEffect(() => {
-    if (walletAddress != undefined) {
+    if (isConnected && address) {
+      setWalletAddress(address);
+    }
+
+    if (w_address != undefined) {
       loadNftData();
     }
-  }, [walletAddress]);
+  }, [w_address, isConnected, address]);
 
   async function loadNftData() {
     const provider = new ethers.providers.JsonRpcProvider(
       `https://eth-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_AlchemyAPI}`
     );
     const sbtContract = new ethers.Contract(noxNFTAddress, noxSbtABI, provider);
-    const owned: number[] = await sbtContract.walletOfOwner(walletAddress);
+    const owned: number[] = await sbtContract.walletOfOwner(w_address);
     setTokensOwned(owned);
     if (owned.length == 0) {
       setTokens("0");
@@ -73,13 +77,11 @@ function Account() {
         </div>
         <p className="text-xl ml-6">Unnamed </p>
         <Link
-          href={`https://goerli.etherscan.io/address/${walletAddress}`}
+          href={`https://goerli.etherscan.io/address/${w_address}`}
           className="ml-6 link link-info text-white"
         >
           {" "}
-          {walletAddress != undefined
-            ? truncateEthAddress(walletAddress)
-            : null}
+          {w_address != undefined ? truncateEthAddress(w_address) : null}
         </Link>
         <p className="text-center text-4xl bannerHeading desktop:pt-36 laptop:pt-24 tablet:pt-20 mobile:pt-12">
           My Documents{" "}
@@ -94,7 +96,7 @@ function Account() {
             {nfts.length == 0 && !loading && (
               <div className="w-80 h-80 place-content-center col-span-6">
                 <Image src={placeholderImg} alt="placeholder" />
-                <p className="text-center pt-4">No NFT Owned</p>
+                <p className="text-center pt-4">No Document Owned</p>
               </div>
             )}
             {nfts.length > 0 && (

@@ -1,16 +1,21 @@
+"use client";
 import { useEffect } from "react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount, useBalance } from "wagmi";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 function Account() {
   const { address, isConnected } = useAccount();
+  const { data: session, status } = useSession();
   const router = useRouter();
+  console.log(status);
+
   useEffect(() => {
-    if (isConnected) {
+    if (isConnected && session && status == "authenticated") {
       router.replace(`/account/${address}`);
     }
-  }, [isConnected]);
+  }, [isConnected, address, router]);
   return (
     <div className="hero min-h-screen bg-[#120F22]">
       <div className="hero-content text-center">

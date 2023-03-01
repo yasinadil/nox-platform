@@ -1,3 +1,4 @@
+"use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -13,6 +14,7 @@ import facebook from "../../assets/facebook.png";
 import discord from "../../assets/discord.png";
 import etherscan from "../../assets/etherscan.png";
 import "react-toastify/dist/ReactToastify.css";
+const crypto = require("crypto");
 
 const noxPlatformABI = require("../../components/ABI/noxPlatformABI.json");
 
@@ -23,6 +25,11 @@ function Issue() {
   const [fileDesc, setFileDesc] = useState("");
   const [fileState, setFile] = useState<FileList | null>(null);
   const [provider, setProvider] = useState({});
+  const [isChecked, setIsChecked] = useState(false);
+
+  const handleCheckboxChange = (event) => {
+    setIsChecked(event.target.checked);
+  };
 
   useEffect(() => {
     if (typeof window.ethereum !== "undefined") {
@@ -56,15 +63,72 @@ function Issue() {
 
       if (data !== undefined) {
         const [name, url] = data;
-        console.log(name);
-        console.log(url);
-        if (url) {
-          await toast.promise(handleMint(fileDesc, issueeWallet, url), {
+        // if (isChecked) {
+        //   const headers = {
+        //     "Content-Type": "application/json",
+        //   };
+        //   fetch("/api/getUserDetails", {
+        //     method: "POST",
+        //     headers: headers,
+        //     body: JSON.stringify({
+        //       walletAddress: issueeWallet,
+        //     }),
+        //   })
+        //     .then((response) => response.json())
+        //     .then((data) => {
+        //       const userDetails = data.message;
+        //       if (userDetails != "User not found") {
+        //         // Message to be encrypted
+        //         const message = url;
+        //         console.log(userDetails.publicKey);
+
+        //         // Encrypt the message with the public key
+        //         const encrypted = crypto.publicEncrypt(
+        //           {
+        //             key: userDetails.publicKey,
+        //             padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+        //             oaepHash: "sha256",
+        //           },
+        //           Buffer.from(message)
+        //         );
+
+        //         console.log("Encrypted message:", encrypted.toString("base64"));
+
+        //         if (!isChecked) {
+        //           await toast.promise(
+        //             handleMint(fileDesc, issueeWallet, url, isChecked),
+        //             {
+        //               pending: "Minting your Document into an NFT... ⏳",
+        //               success: "NFT Minted! 🎉",
+        //               error: "Something went wrong! 😢",
+        //             }
+        //           );
+        //         } else {
+        //           await toast.promise(
+        //             handleMint(fileDesc, issueeWallet, encrypted, isChecked),
+        //             {
+        //               pending: "Minting your Document into an NFT... ⏳",
+        //               success: "NFT Minted! 🎉",
+        //               error: "Something went wrong! 😢",
+        //             }
+        //           );
+        //         }
+        //       }
+        //     });
+        //   //get internal wallet of issuee
+        //   //encrypt
+        // }
+        // console.log(name);
+        // console.log(url);
+
+        await toast.promise(
+          handleMint(fileDesc, issueeWallet, url, isChecked),
+          {
             pending: "Minting your Document into an NFT... ⏳",
             success: "NFT Minted! 🎉",
             error: "Something went wrong! 😢",
-          });
-        }
+          }
+        );
       }
     }
   };
@@ -126,7 +190,13 @@ function Issue() {
     const signer = provider.getSigner();
     let contract = new ethers.Contract(noxPlatform, noxPlatformABI, signer);
     try {
-      const response = await contract.issue(issuee, fileDesc, url);
+      if (isChecked) {
+        //encrypt url
+        const response = await contract.issue(issuee, fileDesc, url, isChecked);
+      } else {
+        const response = await contract.issue(issuee, fileDesc, url, isChecked);
+      }
+
       const wait = await provider.waitForTransaction(response.hash);
     } catch (error: any) {
       let message = error.reason;
@@ -145,7 +215,7 @@ function Issue() {
 
   return (
     <>
-      <div className="desktop:col-span-4 mobile:col-span-4 desktop:mx-auto desktop:my-auto mobile:mx-auto mobile:mt-8 desktop:w-3/4 mobile:w-full">
+      <div className="desktop:col-span-4 mobile:col-span-4 desktop:mx-auto desktop:my-auto laptop:mx-auto laptop:my-auto mobile:mx-auto mobile:mt-8 desktop:w-3/4 laptop:w-3/4 mobile:w-full">
         <div className="hero min-h-screen">
           <div className="hero-content p-0">
             <ToastContainer
@@ -167,7 +237,7 @@ function Issue() {
               </h1>
               <div className="desktop:px-12 mobile:px-3 pt-4 pb-6 bg-[#181527] desktop:mx-0 mobile:mx-6">
                 <div className="flex flex-col md:flex-row md:items-center mb-6">
-                  <label className="desktop:text-lg mobile:text-sm font-medium mb-2 md:mb-0 md:mr-6">
+                  <label className="desktop:text-base mobile:text-sm font-medium mb-2 md:mb-0 md:mr-6">
                     Your Wallet Address:
                   </label>
                   <input
@@ -180,7 +250,7 @@ function Issue() {
                   />
                 </div>
                 <div className="flex flex-col mb-6">
-                  <label className="desktop:text-lg mobile:text-sm font-medium mb-2 md:mb-0 md:mr-6">
+                  <label className="desktop:text-base mobile:text-sm font-medium mb-2 md:mb-0 md:mr-6">
                     Issuee Wallet Address:
                   </label>
                   <input
@@ -193,7 +263,7 @@ function Issue() {
                   />
                 </div>
 
-                <p className="my-4 desktop:text-lg mobile:text-sm">
+                <p className="my-4 desktop:text-base mobile:text-sm">
                   Upload document
                 </p>
 
@@ -208,6 +278,19 @@ function Issue() {
                     }
                   }}
                 />
+                <div className="my-4">
+                  <span className="my-4 desktop:text-base mobile:text-sm">
+                    Issue as Private Document?
+                  </span>
+
+                  <input
+                    className="checkbox checkbox-primary ml-4"
+                    type="checkbox"
+                    checked={isChecked}
+                    onChange={handleCheckboxChange}
+                  />
+                </div>
+
                 <div className="form-control w-full max-w-xs mt-4">
                   <label className="label">
                     <span className="label-text text-white">Document Name</span>
@@ -254,3 +337,19 @@ function Issue() {
   );
 }
 export default Issue;
+
+// const key = process.env.NEXT_PUBLIC_ENCKEY;
+
+// const handleDecrypt = () => {
+//   const decipher = crypto.createDecipher("aes-256-cbc", key);
+//   let decrypted = decipher.update(
+//     userDetails.privateKey,
+//     "hex",
+//     "utf-8"
+//   );
+//   decrypted += decipher.final("utf-8");
+//   return decrypted;
+// };
+
+// const decryptedPrivateKey = handleDecrypt();
+// console.log(decryptedPrivateKey);

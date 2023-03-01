@@ -6,12 +6,14 @@ import Banner from "../components/Banner/Banner";
 import Plan from "../components/Plan/Plan";
 import Buy from "../components/Buy/Buy";
 import Guide from "../components/Guide/Guide";
+
 export default function Home() {
   return (
-    <div className="bgclass ">
-      <div className="desktop:absolute desktop:top-0 desktop:w-[100%] laptop:absolute laptop:top-0 laptop:w-[100%] tablet:absolute tablet:top-0 tablet:w-[100%]">
-        <Navbar />
-      </div>
+    <div className="bgclass">
+      {/* <div className="desktop:absolute desktop:top-0 desktop:w-[100%] laptop:absolute laptop:top-0 laptop:w-[100%] tablet:absolute tablet:top-0 tablet:w-[100%]">
+       
+      </div> */}
+      <Navbar />
       <Banner />
       <Guide />
       <Plan />

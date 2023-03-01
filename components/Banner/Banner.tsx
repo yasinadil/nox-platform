@@ -2,7 +2,7 @@ import Image from "next/image";
 import polygon from "../../assets/ethereum-eth-logo.png";
 import guide from "../../assets/guide.png";
 import Navbar from "../Navbar/Navbar";
-
+import Link from "next/link";
 function Banner() {
   return (
     <div className="hero min-h-screen bg-transparent">
@@ -21,7 +21,7 @@ function Banner() {
                 <div className="display">
                   <div className="artboard artboard-demo phone-1 bg-gray-800">
                     <Image
-                      className="spinning"
+                      className="spin-logo"
                       style={{ width: "12vh" }}
                       src={polygon}
                       alt="polygon"
@@ -37,15 +37,18 @@ function Banner() {
               Easy and secure issuance and verification of documents on the
               Ethereum Blockchain.
             </p>
-            <button className="hide-laptop btn btn-outline text-white">
+            <Link
+              href="/swap"
+              className="hide-laptop btn btn-outline text-white"
+            >
               Launch DApp
-            </button>
+            </Link>
             <div className="mockup-phone spin-image">
               <div className="camera "></div>
               <div className="display">
                 <div className="artboard artboard-demo phone-1 bg-gray-800">
                   <Image
-                    className="spinning"
+                    className="spin-logo"
                     style={{ width: "12vh" }}
                     src={polygon}
                     alt="polygon"

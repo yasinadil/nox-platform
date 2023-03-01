@@ -12,9 +12,9 @@ import etherscan from "../../assets/etherscan.png";
 
 function Issue() {
   return (
-    <div className="bg-[#120F22] grid desktop:grid-cols-5 mobile:grid-cols-5 desktop:gap-4 mobile:gap-0">
+    <div className="bg-[#120F22] grid desktop:grid-cols-5 laptop:grid-cols-5 mobile:grid-cols-5 desktop:gap-4 mobile:gap-0">
       <div className="text-center border-r-2 border-[#7000FF]">
-        <div className="desktop:col-span-1 mobile:col-span-2">
+        <div className="desktop:col-span-1 laptop:col-span-1 mobile:col-span-2">
           <div className="desktop:py-24 mobile:py-20">
             <Link className="title desktop:text-4xl mobile:text-xl" href="/">
               Nox

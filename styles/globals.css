@@ -82,7 +82,7 @@ body{
   from { transform: rotateY(0deg); }
   to { transform: rotateY(360deg); }
 }
-.spinning {
+.spin-logo {
   animation: spin 3s infinite;
 }
 

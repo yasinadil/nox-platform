@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import qs from "qs";
@@ -34,54 +35,53 @@ function Buy() {
 
   useEffect(() => {
     if (isConnected) {
+      const getNOXBalance = async () => {
+        if (address != undefined) {
+          const balances = await alchemy.core.getTokenBalances(address, [
+            noxTokenAddress,
+          ]);
+
+          balances.tokenBalances.find((item: any) => {
+            const value = BigNumber.from(item.tokenBalance);
+            const formatBalance = ethers.utils.formatEther(value);
+            let balance = Number(formatBalance).toFixed(0);
+            if (
+              item.tokenBalance ===
+              "0x0000000000000000000000000000000000000000000000000000000000000000"
+            ) {
+              setNoxTokenBalance("0");
+            } else {
+              setNoxTokenBalance(balance.toString());
+            }
+          });
+        }
+      };
+
+      const getWETHBalance = async () => {
+        if (address != undefined) {
+          const balanceWETH = await alchemy.core.getTokenBalances(address, [
+            WETH_TokenAddress,
+          ]);
+
+          balanceWETH.tokenBalances.find((item) => {
+            const value = BigNumber.from(item.tokenBalance);
+            const formatBalance = ethers.utils.formatEther(value);
+            let balance = Number(formatBalance).toFixed(4);
+            if (
+              item.tokenBalance ===
+              "0x0000000000000000000000000000000000000000000000000000000000000000"
+            ) {
+              setUserBalance("0");
+            } else {
+              setUserBalance(balance.toString());
+            }
+          });
+        }
+      };
       getNOXBalance();
       getWETHBalance();
     }
-  }, [isConnected, address]);
-
-  const getNOXBalance = async () => {
-    if (address != undefined) {
-      const balances = await alchemy.core.getTokenBalances(address, [
-        noxTokenAddress,
-      ]);
-
-      balances.tokenBalances.find((item: any) => {
-        const value = BigNumber.from(item.tokenBalance);
-        const formatBalance = ethers.utils.formatEther(value);
-        let balance = Number(formatBalance).toFixed(0);
-        if (
-          item.tokenBalance ===
-          "0x0000000000000000000000000000000000000000000000000000000000000000"
-        ) {
-          setNoxTokenBalance("0");
-        } else {
-          setNoxTokenBalance(balance.toString());
-        }
-      });
-    }
-  };
-
-  const getWETHBalance = async () => {
-    if (address != undefined) {
-      const balanceWETH = await alchemy.core.getTokenBalances(address, [
-        WETH_TokenAddress,
-      ]);
-
-      balanceWETH.tokenBalances.find((item) => {
-        const value = BigNumber.from(item.tokenBalance);
-        const formatBalance = ethers.utils.formatEther(value);
-        let balance = Number(formatBalance).toFixed(4);
-        if (
-          item.tokenBalance ===
-          "0x0000000000000000000000000000000000000000000000000000000000000000"
-        ) {
-          setUserBalance("0");
-        } else {
-          setUserBalance(balance.toString());
-        }
-      });
-    }
-  };
+  }, [isConnected, address, alchemy.core]);
 
   const getPrice = async (wethAmount: string) => {
     const params = {
@@ -211,7 +211,7 @@ function Buy() {
       />
 
       <div className="flex justify-center">
-        <div className="border-4 border-[#8E00FE] desktop:px-16 mobile:px-3 desktop:py-16 tablet:py-8 mobile:py-16 rounded-3xl">
+        <div className="border-4 border-[#8E00FE] desktop:px-12 mobile:px-3 desktop:py-12 tablet:py-4 mobile:py-12 rounded-3xl">
           <p className="text-center pb-8 font-semibold desktop:text-2xl laptop:text-2xl tablet:text-xl mobile:text-xl">
             Swap WETH to NOX
           </p>
@@ -227,7 +227,7 @@ function Buy() {
                   max={userBalance}
                   placeholder="Enter amount"
                   required
-                  className="input input-bordered text-black"
+                  className="input input-bordered text-black "
                   onChange={(e) => {
                     if (e.target.value != "" && Number(e.target.value) > 0) {
                       const val = e.target.value;
@@ -265,9 +265,11 @@ function Buy() {
                   placeholder="0"
                   value={swapValue}
                   readOnly
-                  className="input input-bordered text-black"
+                  className="input input-bordered text-white glassEffect"
                 />
-                <span className="text-gray-700">&nbsp;NOX&nbsp;</span>
+                <span className="text-gray-500 glassEffect">
+                  &nbsp;NOX&nbsp;
+                </span>
               </label>
               <label className="label">
                 <span className="label-text-alt text-white">
