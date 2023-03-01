@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const connectMongo = async () => {
    
-    return mongoose.connect(process.env.MONGO_URL!);
+    return mongoose.connect(process.env.NEXT_PUBLIC_MONGO_URL!);
       
 }
 
