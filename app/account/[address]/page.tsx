@@ -29,7 +29,6 @@ function Account({ params }: any) {
     if (isConnected && address) {
       setWalletAddress(address);
     }
-
     if (w_address != undefined) {
       loadNftData();
     }
@@ -60,7 +59,6 @@ function Account({ params }: any) {
       if (TokenImage.startsWith("ipfs://")) {
         TokenImage = `https://w3s.link/ipfs/${TokenImage.split("ipfs://")[1]}`;
       }
-
       setNfts((nfts) => [...nfts, { name: TokenName, img: TokenImage }]);
     }
     isLoading(false);

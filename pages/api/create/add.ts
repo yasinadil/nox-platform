@@ -16,7 +16,7 @@ export default async function handler(
             
         if(!data.walletAddress){
             console.log("Not enough information provided.");
-            res.status(400).json({message:"Not enough information provided."});
+            return res.status(400).json({message:"Not enough information provided."});
         }
 
         try {
@@ -25,12 +25,11 @@ export default async function handler(
             const user = await User.findOne({ walletAddress: address });
          
                 if (user) {
-                  console.log(user);
-                  res.status(200).json({message: "User already exists"});
+                  return res.status(200).json({message: "User already exists"});
                 } else if(!user) {
                   if(!data.name){
                     console.log("Not enough information provided.");
-                    res.status(400).json({message:"Not enough information provided."});
+                    return res.status(400).json({message:"Not enough information provided."});
                 }
                   //create his internal wallet
                   const wallet = ethers.Wallet.createRandom();
@@ -59,18 +58,16 @@ export default async function handler(
                   console.log("User not found");
                   newUser.save();
                 }
-              
-            res.status(200).json({message: "connected"});
         } catch (error) {
 
             console.log(error);
-            console.log(error);
+   
             
-            res.status(400).json({message:"Something went wrong!"});
+            return res.status(400).json({message:"Something went wrong!"});
         }
         }
         else{
-            res.status(400).json({message: "Wrong request"});
+          return res.status(400).json({message: "Wrong request"});
         }
         
         

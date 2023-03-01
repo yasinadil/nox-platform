@@ -129,7 +129,7 @@ export default function RootLayout({
             theme="light"
           />
           <WagmiConfig client={wagmiClient}>
-            <SessionProvider refetchInterval={0} session={children.session}>
+            <SessionProvider refetchInterval={0}>
               {/* <RainbowKitSiweNextAuthProvider> */}
               <RainbowKitProvider theme={myCustomTheme} chains={chains}>
                 {children}
