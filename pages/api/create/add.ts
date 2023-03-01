@@ -20,7 +20,7 @@ export default async function handler(
         }
 
         try {
-            const connection = await connectMongo();
+            await connectMongo();
             const {walletAddress: address} = req.body;
             const user = await User.findOne({ walletAddress: address });
          
@@ -57,6 +57,7 @@ export default async function handler(
                   const newUser = new User(dataToSend)
                   console.log("User not found");
                   newUser.save();
+                  return res.status(200).json({message: "User created successfully"});
                 }
         } catch (error) {
 

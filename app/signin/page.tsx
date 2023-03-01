@@ -3,11 +3,7 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useRouter } from "next/navigation";
 import { getCsrfToken, signIn, useSession } from "next-auth/react";
 import { SiweMessage } from "siwe";
-import {
-  useAccount,
-  useNetwork,
-  useSignMessage,
-} from "wagmi";
+import { useAccount, useNetwork, useSignMessage } from "wagmi";
 import React, { useEffect, useState } from "react";
 
 function Sign() {
@@ -57,6 +53,8 @@ function Sign() {
         .then((response) => response.json())
         .then((data) => {
           if (data.message === "User already exists") {
+            router.replace("/swap");
+          } else if (data.message === "User created successfully") {
             router.replace("/swap");
           }
         });
