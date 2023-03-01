@@ -25,7 +25,7 @@ export default async function handler(
                 } else if(!user) {
                  
                   console.log("User not found");
-                  return res.status(200).json({message: "User not found"});
+                  return res.status(200).json({message: "User not found", secret: process.env.NEXT_PUBLIC_NEXTAUTH_SECRET});
                 }
               
            
