@@ -26,6 +26,9 @@ function Account({ params }: any) {
   const { address, isConnected } = useAccount();
 
   useEffect(() => {
+    if (!isConnected) {
+      setNfts([]);
+    }
     if (isConnected && address) {
       setWalletAddress(address);
     }
