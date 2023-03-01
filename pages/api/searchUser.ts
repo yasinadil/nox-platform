@@ -1,17 +1,11 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
-import connectMongo from "/utils/connectMongo";
-import {User} from "/models/userModel";
-import mongoose from 'mongoose';
-import { ethers } from 'ethers';
-
-type Data = {
-  name: string
-}
+import connectMongo from "../../utils/connectMongo";
+import {User} from "../../models/userModel";
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>
+  res: NextApiResponse
 ) {
    
         if(req.method === "POST"){
@@ -23,8 +17,7 @@ export default async function handler(
         }
 
         try {
-            const connection = await connectMongo();
-            
+            await connectMongo();
             const user = await User.findOne({ walletAddress: address });
          
                 if (user) {
@@ -45,10 +38,4 @@ export default async function handler(
         else{
             res.status(400).json({message: "Wrong request"});
         }
-    
-          
-        
-        // const submit = await User.create(req.body);
-        
-   
 }

@@ -1,10 +1,10 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { noxNFTAddress, noxPlatform } from "/Config";
+import { noxNFTAddress, noxPlatform } from "../../../Config";
 import { ethers, BigNumber } from "ethers";
-import Navbar from "/components/Navbar/Navbar";
-import Footer from "/components/Footer/Footer";
+import Navbar from "../../../components/Navbar/Navbar";
+import Footer from "../../../components/Footer/Footer";
 import placeholderImg from "/assets/img-placeholder.png";
 import share from "/assets/share.png";
 import Image from "next/image";
@@ -28,49 +28,51 @@ function NFTPage({ params }: any) {
 
   useEffect(() => {
     if (tokenId != undefined) {
-      async function loadNftData() {
-        const provider = new ethers.providers.JsonRpcProvider(
-          `https://eth-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_AlchemyAPI}`
-        );
-        const sbtContract = new ethers.Contract(
-          noxNFTAddress,
-          noxSbtABI,
-          provider
-        );
-        let url = await sbtContract.tokenURI(Number(tokenId));
-
-        if (url.startsWith("ipfs://")) {
-          url = `https://w3s.link/ipfs/${url.split("ipfs://")[1]}`;
-        }
-        const TokenMetadata = await fetch(url).then((response) =>
-          response.json()
-        );
-
-        let TokenImage = TokenMetadata.image;
-        let TokenName = TokenMetadata.name;
-        let TokenDescription = TokenMetadata.description;
-        let TokenIssuer = TokenMetadata.issuer;
-        let TokenIssuee = TokenMetadata.issuee;
-        let TokenDate = Number(TokenMetadata.date);
-        let tokendate = new Date(TokenDate * 1000);
-        if (TokenImage.startsWith("ipfs://")) {
-          TokenImage = `https://w3s.link/ipfs/${
-            TokenImage.split("ipfs://")[1]
-          }`;
-        }
-
-        setNFT({
-          name: TokenName,
-          img: TokenImage,
-          description: TokenDescription,
-          issuer: TokenIssuer,
-          issuee: TokenIssuee,
-          date: tokendate.toLocaleDateString("en-GB"),
-        });
-      }
+      
       loadNftData();
     }
   }, [tokenId]);
+
+  async function loadNftData() {
+    const provider = new ethers.providers.JsonRpcProvider(
+      `https://eth-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_AlchemyAPI}`
+    );
+    const sbtContract = new ethers.Contract(
+      noxNFTAddress,
+      noxSbtABI,
+      provider
+    );
+    let url = await sbtContract.tokenURI(Number(tokenId));
+
+    if (url.startsWith("ipfs://")) {
+      url = `https://w3s.link/ipfs/${url.split("ipfs://")[1]}`;
+    }
+    const TokenMetadata = await fetch(url).then((response) =>
+      response.json()
+    );
+
+    let TokenImage = TokenMetadata.image;
+    let TokenName = TokenMetadata.name;
+    let TokenDescription = TokenMetadata.description;
+    let TokenIssuer = TokenMetadata.issuer;
+    let TokenIssuee = TokenMetadata.issuee;
+    let TokenDate = Number(TokenMetadata.date);
+    let tokendate = new Date(TokenDate * 1000);
+    if (TokenImage.startsWith("ipfs://")) {
+      TokenImage = `https://w3s.link/ipfs/${
+        TokenImage.split("ipfs://")[1]
+      }`;
+    }
+
+    setNFT({
+      name: TokenName,
+      img: TokenImage,
+      description: TokenDescription,
+      issuer: TokenIssuer,
+      issuee: TokenIssuee,
+      date: tokendate.toLocaleDateString("en-GB"),
+    });
+  }
 
   return (
     <div className="text-white bg-[#120F22] justify-start">

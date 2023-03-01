@@ -1,5 +1,3 @@
-import Image from "next/image";
-import bgimage from "../assets/bg-main-page.png";
 import Navbar from "../components/Navbar/Navbar";
 import Footer from "../components/Footer/Footer";
 import Banner from "../components/Banner/Banner";
@@ -10,9 +8,6 @@ import Guide from "../components/Guide/Guide";
 export default function Home() {
   return (
     <div className="bgclass">
-      {/* <div className="desktop:absolute desktop:top-0 desktop:w-[100%] laptop:absolute laptop:top-0 laptop:w-[100%] tablet:absolute tablet:top-0 tablet:w-[100%]">
-       
-      </div> */}
       <Navbar />
       <Banner />
       <Guide />

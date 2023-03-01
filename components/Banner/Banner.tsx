@@ -1,7 +1,5 @@
 import Image from "next/image";
 import polygon from "../../assets/ethereum-eth-logo.png";
-import guide from "../../assets/guide.png";
-import Navbar from "../Navbar/Navbar";
 import Link from "next/link";
 function Banner() {
   return (
@@ -65,8 +63,8 @@ function Banner() {
 
 export default Banner;
 
-<div className="hero min-h-screen bg-base-200">
+{/* <div className="hero min-h-screen bg-base-200">
   <div className="hero-content text-center">
     <div className="max-w-md"></div>
   </div>
-</div>;
+</div>; */}

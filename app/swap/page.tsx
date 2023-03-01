@@ -1,8 +1,6 @@
-import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import SwapDApp from "../../components/SwapDApp/SwapDApp";
-import upload from "../../assets/upload.png";
 import logo from "../../assets/logo.png";
 import twitter from "../../assets/twitter.png";
 import facebook from "../../assets/facebook.png";

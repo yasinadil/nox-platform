@@ -3,18 +3,11 @@ import { useEffect, useState } from "react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Avatar from "../../assets/user.png";
-import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { getCsrfToken, signIn, useSession } from "next-auth/react";
-import { SiweMessage } from "siwe";
+import { useSession } from "next-auth/react";
 import {
   useAccount,
-  useBalance,
-  useConnect,
-  useNetwork,
-  useSignMessage,
   useDisconnect,
 } from "wagmi";
 

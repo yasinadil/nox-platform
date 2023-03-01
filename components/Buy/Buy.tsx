@@ -35,53 +35,54 @@ function Buy() {
 
   useEffect(() => {
     if (isConnected) {
-      const getNOXBalance = async () => {
-        if (address != undefined) {
-          const balances = await alchemy.core.getTokenBalances(address, [
-            noxTokenAddress,
-          ]);
-
-          balances.tokenBalances.find((item: any) => {
-            const value = BigNumber.from(item.tokenBalance);
-            const formatBalance = ethers.utils.formatEther(value);
-            let balance = Number(formatBalance).toFixed(0);
-            if (
-              item.tokenBalance ===
-              "0x0000000000000000000000000000000000000000000000000000000000000000"
-            ) {
-              setNoxTokenBalance("0");
-            } else {
-              setNoxTokenBalance(balance.toString());
-            }
-          });
-        }
-      };
-
-      const getWETHBalance = async () => {
-        if (address != undefined) {
-          const balanceWETH = await alchemy.core.getTokenBalances(address, [
-            WETH_TokenAddress,
-          ]);
-
-          balanceWETH.tokenBalances.find((item) => {
-            const value = BigNumber.from(item.tokenBalance);
-            const formatBalance = ethers.utils.formatEther(value);
-            let balance = Number(formatBalance).toFixed(4);
-            if (
-              item.tokenBalance ===
-              "0x0000000000000000000000000000000000000000000000000000000000000000"
-            ) {
-              setUserBalance("0");
-            } else {
-              setUserBalance(balance.toString());
-            }
-          });
-        }
-      };
       getNOXBalance();
       getWETHBalance();
     }
   }, [isConnected, address, alchemy.core]);
+
+  const getNOXBalance = async () => {
+    if (address != undefined) {
+      const balances = await alchemy.core.getTokenBalances(address, [
+        noxTokenAddress,
+      ]);
+
+      balances.tokenBalances.find((item: any) => {
+        const value = BigNumber.from(item.tokenBalance);
+        const formatBalance = ethers.utils.formatEther(value);
+        let balance = Number(formatBalance).toFixed(0);
+        if (
+          item.tokenBalance ===
+          "0x0000000000000000000000000000000000000000000000000000000000000000"
+        ) {
+          setNoxTokenBalance("0");
+        } else {
+          setNoxTokenBalance(balance.toString());
+        }
+      });
+    }
+  };
+
+  const getWETHBalance = async () => {
+    if (address != undefined) {
+      const balanceWETH = await alchemy.core.getTokenBalances(address, [
+        WETH_TokenAddress,
+      ]);
+
+      balanceWETH.tokenBalances.find((item) => {
+        const value = BigNumber.from(item.tokenBalance);
+        const formatBalance = ethers.utils.formatEther(value);
+        let balance = Number(formatBalance).toFixed(4);
+        if (
+          item.tokenBalance ===
+          "0x0000000000000000000000000000000000000000000000000000000000000000"
+        ) {
+          setUserBalance("0");
+        } else {
+          setUserBalance(balance.toString());
+        }
+      });
+    }
+  };
 
   const getPrice = async (wethAmount: string) => {
     const params = {

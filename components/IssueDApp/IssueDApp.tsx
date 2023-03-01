@@ -120,15 +120,17 @@ function Issue() {
         // }
         // console.log(name);
         // console.log(url);
-
-        await toast.promise(
-          handleMint(fileDesc, issueeWallet, url, isChecked),
-          {
-            pending: "Minting your Document into an NFT... ⏳",
-            success: "NFT Minted! 🎉",
-            error: "Something went wrong! 😢",
-          }
-        );
+        if(url){
+          await toast.promise(
+            handleMint(issueeWallet, url),
+            {
+              pending: "Minting your Document into an NFT... ⏳",
+              success: "NFT Minted! 🎉",
+              error: "Something went wrong! 😢",
+            }
+          );
+        }
+        
       }
     }
   };
@@ -182,9 +184,8 @@ function Issue() {
   };
 
   const handleMint = async (
-    description: string,
     issuee: string,
-    url: string
+    url: string,
   ) => {
     const provider = new ethers.providers.Web3Provider(window.ethereum as any);
     const signer = provider.getSigner();
@@ -193,11 +194,11 @@ function Issue() {
       if (isChecked) {
         //encrypt url
         const response = await contract.issue(issuee, fileDesc, url, isChecked);
+        await provider.waitForTransaction(response.hash);
       } else {
         const response = await contract.issue(issuee, fileDesc, url, isChecked);
+        await provider.waitForTransaction(response.hash);
       }
-
-      const wait = await provider.waitForTransaction(response.hash);
     } catch (error: any) {
       let message = error.reason;
       toast.error(message, {

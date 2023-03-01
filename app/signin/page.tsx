@@ -5,16 +5,10 @@ import { getCsrfToken, signIn, useSession } from "next-auth/react";
 import { SiweMessage } from "siwe";
 import {
   useAccount,
-  useBalance,
-  useConnect,
   useNetwork,
   useSignMessage,
 } from "wagmi";
-import Layout from "../components/layout";
-import { useEffect, useState, useRef } from "react";
-import { ethers } from "ethers";
-import connectMongo from "/utils/connectMongo";
-import User from "/models/userModel";
+import React, { useEffect, useState } from "react";
 
 function Sign() {
   const { address, isConnected } = useAccount();
@@ -23,7 +17,6 @@ function Sign() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [userName, setUserName] = useState<string>("");
-  const [serverRes, setServerRes] = useState<string>("");
   const [userExists, setUserExists] = useState<boolean>(true);
   const [userNameValid, setUserNameValid] = useState<boolean>(false);
   console.log(status);
@@ -70,7 +63,7 @@ function Sign() {
     }
   }, [isConnected, address, session]);
 
-  const handleLogin = async (e) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       const message = new SiweMessage({

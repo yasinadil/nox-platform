@@ -1,18 +1,14 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
-import connectMongo from "/utils/connectMongo";
-import {User} from "/models/userModel";
-import mongoose from 'mongoose';
+import connectMongo from "../../../utils/connectMongo";
+import {User} from "../../../models/userModel";
 import { ethers } from 'ethers';
 import crypto from "crypto";
 
-type Data = {
-  name: string
-}
+
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>
+  res: NextApiResponse
 ) {
    
         if(req.method === "POST"){
@@ -39,6 +35,7 @@ export default async function handler(
                   //create his internal wallet
                   const wallet = ethers.Wallet.createRandom();
                   let plaintext = wallet.privateKey;
+               
                   let key = process.env.NEXT_PUBLIC_ENCKEY;
                   const handleEncrypt = (message: string, secretKey: string) => {
                     const cipher = crypto.createCipher("aes-256-cbc", secretKey);
@@ -46,7 +43,11 @@ export default async function handler(
                     encrypted += cipher.final("hex");
                     return encrypted;
                   };
-                  const ciphertextString = handleEncrypt(plaintext, key)
+                  let ciphertextString;
+                  if(key != undefined){
+                    ciphertextString = handleEncrypt(plaintext, key)
+                  }
+                  
                   const dataToSend = {
                     name: data.name,
                     walletAddress: address,
