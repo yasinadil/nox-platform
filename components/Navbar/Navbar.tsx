@@ -56,7 +56,7 @@ function Navbar() {
         {/* <ConnectButton /> */}
         <div className="avatar online cursor-pointer">
           <div className=" rounded-full">
-            {isConnected && session ? (
+            {isConnected ? (
               <Link href={`/account/${userAddress}`}>
                 <Image
                   src={Avatar}
