@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import Link from "next/link";
 import { Web3Storage } from "web3.storage";
@@ -9,8 +10,29 @@ import twitter from "../../assets/twitter.png";
 import facebook from "../../assets/facebook.png";
 import discord from "../../assets/discord.png";
 import etherscan from "../../assets/etherscan.png";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 function Issue() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status == "unauthenticated") {
+      router.push("/signin");
+    }
+  }, [router, status]);
+
+  if (status === "loading" || status === "unauthenticated") {
+    return (
+      <div className="hero min-h-screen bg-[#120F22]">
+        <div className="hero-content text-center bg-transparent">
+          <p className="text-purple-800">Loading </p>
+          <progress className="progress w-56"></progress>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="bg-[#120F22] grid desktop:grid-cols-5 laptop:grid-cols-5 mobile:grid-cols-5 desktop:gap-4 mobile:gap-0">
       <div className="text-center border-r-2 border-[#7000FF]">
