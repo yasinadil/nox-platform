@@ -10,6 +10,7 @@ import twitter from "../../assets/twitter.png";
 import facebook from "../../assets/facebook.png";
 import discord from "../../assets/discord.png";
 import etherscan from "../../assets/etherscan.png";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
