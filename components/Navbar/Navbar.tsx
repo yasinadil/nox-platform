@@ -5,11 +5,9 @@ import Link from "next/link";
 import Image from "next/image";
 import Avatar from "../../assets/user.png";
 import "react-toastify/dist/ReactToastify.css";
+import logo from "../../assets/logo.png";
 import { useSession } from "next-auth/react";
-import {
-  useAccount,
-  useDisconnect,
-} from "wagmi";
+import { useAccount, useDisconnect } from "wagmi";
 
 function Navbar() {
   const [userAddress, setUserAddress] = useState("");
@@ -24,9 +22,12 @@ function Navbar() {
   }, [isConnected, address]);
 
   return (
-    <div className="navbar bg-[#120F22] desktop:pt-8 desktop:px-8 mobile:pt-8 mobile:px-2 ">
+    <div className="navbar bg-[#120F22] desktop:pt-8 desktop:px-8 laptop:pt-8 laptop:px-8 mobile:pt-8 mobile:px-2 ">
       <div className="flex-1">
-        <Link href="/" className="title desktop:text-4xl mobile:text-3xl">
+        <Link
+          href="/"
+          className="title desktop:text-6xl laptop:text-5xl mobile:text-3xl"
+        >
           Nox
         </Link>
       </div>
