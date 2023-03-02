@@ -15,11 +15,9 @@ function Swap() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  useEffect(() => {
-    if (status == "unauthenticated") {
-      router.push("/signin");
-    }
-  }, [router]);
+  if (status == "unauthenticated") {
+    router.push("/signin");
+  }
 
   if (status === "loading" || status === "unauthenticated") {
     return (
