@@ -19,7 +19,7 @@ function Swap() {
     if (status == "unauthenticated") {
       router.push("/signin");
     }
-  }, [router, status]);
+  }, [router]);
 
   if (status === "loading" || status === "unauthenticated") {
     return (
