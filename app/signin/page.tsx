@@ -13,11 +13,16 @@ function Sign() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [userName, setUserName] = useState<string>("");
-  const [userExists, setUserExists] = useState<boolean>(true);
+  const [userExists, setUserExists] = useState<boolean>(false);
   const [userNameValid, setUserNameValid] = useState<boolean>(false);
+  const [eKey, setEKey] = useState<string>("");
   console.log(status);
 
   useEffect(() => {
+    searchUser();
+  }, [address, isConnected, session]);
+
+  const searchUser = async () => {
     if (isConnected) {
       const headers = {
         "Content-Type": "application/json",
@@ -32,34 +37,78 @@ function Sign() {
         .then((response) => response.json())
         .then((data) => {
           if (data.message === "User not found") {
-            setUserExists(false);
+            const register = async () => {
+              if (isConnected && session) {
+                const encKey = await (window as any).ethereum.request({
+                  method: "eth_getEncryptionPublicKey",
+                  params: [address], // you must have access to the specified account
+                });
+                setEKey(encKey);
+                console.log(encKey);
+                if (encKey !== "" && session && isConnected) {
+                  add();
+                }
+              }
+            };
+            register();
           }
-        });
-    }
-  }, [address, isConnected]);
-
-  useEffect(() => {
-    if (isConnected && session) {
-      fetch("/api/create/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: userName,
-          walletAddress: address,
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
           if (data.message === "User already exists") {
-            router.replace("/swap");
-          } else if (data.message === "User created successfully") {
-            router.replace("/swap");
+            if (isConnected && session) {
+              router.replace("/swap");
+            }
           }
         });
     }
-  }, [isConnected, address, session]);
+  };
+
+  // useEffect(() => {
+  //   if (isConnected && session && userExists) {
+  //     router.replace("/swap");
+  //   }
+  //   const register = async () => {
+  //     if (isConnected && session && !userExists) {
+  //       const encKey = await (window as any).ethereum.request({
+  //         method: "eth_getEncryptionPublicKey",
+  //         params: [address], // you must have access to the specified account
+  //       });
+  //       setEKey(encKey);
+  //       console.log(encKey);
+  //       if (encKey !== "" && session && !userExists && isConnected) {
+  //         add();
+  //       }
+  //     }
+  //   };
+  //   register();
+  // }, [isConnected, address, session, userExists]);
+
+  // useEffect(() => {
+  //   async function addUser() {
+  //     if (eKey !== "" && session && !userExists && isConnected) {
+  //       add();
+  //     }
+  //   }
+  //   addUser();
+  // }, [eKey]);
+
+  const add = async () => {
+    fetch("/api/create/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: userName,
+        walletAddress: address,
+        encryptedPublicKey: eKey,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.message === "User created successfully") {
+          router.replace("/swap");
+        }
+      });
+  };
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

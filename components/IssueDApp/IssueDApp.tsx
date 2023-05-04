@@ -1,21 +1,11 @@
 "use client";
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { ethers, BigNumber } from "ethers";
+import { useState } from "react";
+import { ethers } from "ethers";
 import { useAccount } from "wagmi";
 import { Web3Storage } from "web3.storage";
 import { ToastContainer, toast } from "react-toastify";
 import { noxPlatform } from "../../Config";
-import upload from "../../assets/upload.png";
-import logo from "../../assets/logo.png";
-import twitter from "../../assets/twitter.png";
-import facebook from "../../assets/facebook.png";
-import discord from "../../assets/discord.png";
-import etherscan from "../../assets/etherscan.png";
 import "react-toastify/dist/ReactToastify.css";
-const crypto = require("crypto");
-
 const noxPlatformABI = require("../../components/ABI/noxPlatformABI.json");
 
 function Issue() {
@@ -24,21 +14,11 @@ function Issue() {
   const [fileName, setFileName] = useState("");
   const [fileDesc, setFileDesc] = useState("");
   const [fileState, setFile] = useState<FileList | null>(null);
-  const [provider, setProvider] = useState({});
   const [isChecked, setIsChecked] = useState(false);
 
   const handleCheckboxChange = (event) => {
     setIsChecked(event.target.checked);
   };
-
-  useEffect(() => {
-    if (typeof window.ethereum !== "undefined") {
-      const provider = new ethers.providers.Web3Provider(
-        window.ethereum as any
-      );
-      setProvider(provider);
-    }
-  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -63,74 +43,14 @@ function Issue() {
 
       if (data !== undefined) {
         const [name, url] = data;
-        // if (isChecked) {
-        //   const headers = {
-        //     "Content-Type": "application/json",
-        //   };
-        //   fetch("/api/getUserDetails", {
-        //     method: "POST",
-        //     headers: headers,
-        //     body: JSON.stringify({
-        //       walletAddress: issueeWallet,
-        //     }),
-        //   })
-        //     .then((response) => response.json())
-        //     .then((data) => {
-        //       const userDetails = data.message;
-        //       if (userDetails != "User not found") {
-        //         // Message to be encrypted
-        //         const message = url;
-        //         console.log(userDetails.publicKey);
 
-        //         // Encrypt the message with the public key
-        //         const encrypted = crypto.publicEncrypt(
-        //           {
-        //             key: userDetails.publicKey,
-        //             padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
-        //             oaepHash: "sha256",
-        //           },
-        //           Buffer.from(message)
-        //         );
-
-        //         console.log("Encrypted message:", encrypted.toString("base64"));
-
-        //         if (!isChecked) {
-        //           await toast.promise(
-        //             handleMint(fileDesc, issueeWallet, url, isChecked),
-        //             {
-        //               pending: "Minting your Document into an NFT... ⏳",
-        //               success: "NFT Minted! 🎉",
-        //               error: "Something went wrong! 😢",
-        //             }
-        //           );
-        //         } else {
-        //           await toast.promise(
-        //             handleMint(fileDesc, issueeWallet, encrypted, isChecked),
-        //             {
-        //               pending: "Minting your Document into an NFT... ⏳",
-        //               success: "NFT Minted! 🎉",
-        //               error: "Something went wrong! 😢",
-        //             }
-        //           );
-        //         }
-        //       }
-        //     });
-        //   //get internal wallet of issuee
-        //   //encrypt
-        // }
-        // console.log(name);
-        // console.log(url);
-        if(url){
-          await toast.promise(
-            handleMint(issueeWallet, url),
-            {
-              pending: "Minting your Document into an NFT... ⏳",
-              success: "NFT Minted! 🎉",
-              error: "Something went wrong! 😢",
-            }
-          );
+        if (url) {
+          await toast.promise(handleMint(issueeWallet, url), {
+            pending: "Minting your Document into an NFT... ⏳",
+            success: "NFT Minted! 🎉",
+            error: "Something went wrong! 😢",
+          });
         }
-        
       }
     }
   };
@@ -183,10 +103,7 @@ function Issue() {
     }
   };
 
-  const handleMint = async (
-    issuee: string,
-    url: string,
-  ) => {
+  const handleMint = async (issuee: string, url: string) => {
     const provider = new ethers.providers.Web3Provider(window.ethereum as any);
     const signer = provider.getSigner();
     let contract = new ethers.Contract(noxPlatform, noxPlatformABI, signer);

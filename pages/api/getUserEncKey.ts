@@ -24,7 +24,7 @@ export default async function handler(
       if (user) {
         console.log("User found");
 
-        return res.status(200).json({ message: "User found" });
+        return res.status(200).json({ message: user });
       } else if (!user) {
         console.log("User not found");
         return res.status(200).json({ message: "User not found" });

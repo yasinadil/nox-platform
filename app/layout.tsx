@@ -1,23 +1,19 @@
 "use client";
-import { useState, useEffect } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "@/styles/globals.css";
 import "@rainbow-me/rainbowkit/styles.css";
-import { useAccount } from "wagmi";
-import type { AppProps } from "next/app";
-import { RainbowKitSiweNextAuthProvider } from "@rainbow-me/rainbowkit-siwe-next-auth";
 import {
   RainbowKitProvider,
   getDefaultWallets,
   Theme,
 } from "@rainbow-me/rainbowkit";
 import { configureChains, createClient, WagmiConfig } from "wagmi";
-import { mainnet, polygon, optimism, arbitrum, goerli } from "wagmi/chains";
+import { goerli } from "wagmi/chains";
 import { alchemyProvider } from "wagmi/providers/alchemy";
 import { publicProvider } from "wagmi/providers/public";
-import { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
+import { ClerkProvider } from "@clerk/nextjs/app-beta";
 
 const myCustomTheme: Theme = {
   blurs: {
@@ -102,19 +98,11 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { address, isConnected } = useAccount();
-  const [walletAddress, setWalletAddress] = useState("");
-
-  useEffect(() => {
-    if (isConnected && address) {
-      setWalletAddress(address);
-    }
-  }, [isConnected, address]);
-
   return (
     <>
       <html lang="en">
         <head />
+        {/* <ClerkProvider> */}
         <body cz-shortcut-listen="true">
           <ToastContainer
             position="top-right"
@@ -130,14 +118,13 @@ export default function RootLayout({
           />
           <WagmiConfig client={wagmiClient}>
             <SessionProvider refetchInterval={0}>
-              {/* <RainbowKitSiweNextAuthProvider> */}
               <RainbowKitProvider theme={myCustomTheme} chains={chains}>
                 {children}
               </RainbowKitProvider>
-              {/* </RainbowKitSiweNextAuthProvider> */}
             </SessionProvider>
           </WagmiConfig>
         </body>
+        {/* </ClerkProvider> */}
       </html>
     </>
   );
