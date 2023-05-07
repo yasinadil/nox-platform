@@ -343,6 +343,11 @@
         "type": "string"
       },
       {
+        "internalType": "string",
+        "name": "_issuerURL",
+        "type": "string"
+      },
+      {
         "internalType": "bool",
         "name": "_isPrivate",
         "type": "bool"

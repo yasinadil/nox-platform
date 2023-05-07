@@ -258,10 +258,7 @@ function NFTPage({ params }: any) {
           </div>
         </div>
       </div>
-      {/* <div>
-        <p className="m-8">Name: {NFT.name} </p>
-        <p className="m-8">Description: {NFT.description} </p>
-      </div> */}
+
       <div className="grid desktop:grid-cols-2 laptop:grid-cols-2 tablet:grid-cols-2 mobile:grid-cols-1 gap-x-6 mx-8">
         <div className="rounded-2xl">
           <div tabIndex={0} className="collapse collapse-open rounded-box">

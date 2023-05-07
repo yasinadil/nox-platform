@@ -27,6 +27,7 @@ function Issue() {
   const [fileState, setFile] = useState<FileList | null>(null);
   const [isChecked, setIsChecked] = useState(false);
   const [search, setSearch] = useState<User | null>(null);
+  const [newLink, setNewLink] = useState("");
 
   const findUserKey = async (searchWallet) => {
     const headers = {
@@ -48,6 +49,15 @@ function Issue() {
           setSearch(data.message);
         }
       });
+  };
+
+  const getNewTokenID = async () => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum as any);
+    const signer = provider.getSigner();
+    let contract = new ethers.Contract(noxPlatform, noxPlatformABI, signer);
+    let tokenid = await contract.docCount();
+    const newTokenID = Number(tokenid) - 1;
+    setNewLink(`https://nox-platform.vercel.app/token/${newTokenID}`);
   };
 
   const handleCheckboxChange = (event) => {
@@ -156,20 +166,68 @@ function Issue() {
             "utf8"
           )
         );
-        console.log(encryptedMessage);
-
+        const headers = {
+          "Content-Type": "application/json",
+        };
+        fetch("/api/getUserEncKey", {
+          method: "POST",
+          headers: headers,
+          body: JSON.stringify({
+            walletAddress: address,
+          }),
+        })
+          .then((response) => response.json())
+          .then(async (data) => {
+            console.log(data.message);
+            if (data.message === "User not found") {
+              toast.error("Error occurred!", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+              });
+            } else {
+              const encryptedMessageIssuer = ethUtil.bufferToHex(
+                Buffer.from(
+                  JSON.stringify(
+                    sigUtil.encrypt({
+                      publicKey: data.message.publicKey,
+                      data: url,
+                      version: "x25519-xsalsa20-poly1305",
+                    })
+                  ),
+                  "utf8"
+                )
+              );
+              const response = await contract.issue(
+                issuee,
+                fileDesc,
+                encryptedMessage,
+                encryptedMessageIssuer,
+                isChecked
+              );
+              await provider.waitForTransaction(response.hash);
+              return data.message;
+            }
+          });
+      } else {
         const response = await contract.issue(
           issuee,
           fileDesc,
-          encryptedMessage,
+          url,
+          "",
           isChecked
         );
         await provider.waitForTransaction(response.hash);
-      } else {
-        const response = await contract.issue(issuee, fileDesc, url, isChecked);
-        await provider.waitForTransaction(response.hash);
       }
+      await getNewTokenID();
     } catch (error: any) {
+      console.log(error);
+
       let message = error.reason;
       toast.error(message, {
         position: "top-right",
@@ -324,6 +382,7 @@ function Issue() {
                     Issue
                   </button>
                 </div>
+                <div>You can view the issued document at: {newLink}</div>
               </div>
             </form>
           </div>
