@@ -389,7 +389,9 @@ function Issue() {
                 {generateLink && (
                   <div className="mt-3">
                     You can view the issued document at:{" "}
-                    <Link href={newLink}>{newLink}</Link>
+                    <Link className="ml-2" href={newLink}>
+                      <span className="text-blue-600">{newLink}</span>
+                    </Link>
                   </div>
                 )}
               </div>
