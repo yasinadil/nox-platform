@@ -45,14 +45,15 @@ function Sign() {
                 });
                 setEKey(encKey);
                 console.log(encKey);
-                if (encKey !== "" && session && isConnected) {
-                  add();
+                if (encKey && session && isConnected) {
+                  add(encKey);
                 }
               }
             };
             register();
           }
           if (data.message === "User already exists") {
+            setUserExists(true);
             if (isConnected && session) {
               router.replace("/swap");
             }
@@ -61,7 +62,7 @@ function Sign() {
     }
   };
 
-  const add = async () => {
+  const add = async (encrypKey: string) => {
     fetch("/api/create/add", {
       method: "POST",
       headers: {
@@ -70,7 +71,7 @@ function Sign() {
       body: JSON.stringify({
         name: userName,
         walletAddress: address,
-        encryptedPublicKey: eKey,
+        encryptedPublicKey: encrypKey,
       }),
     })
       .then((response) => response.json())
@@ -87,7 +88,7 @@ function Sign() {
       const message = new SiweMessage({
         domain: window.location.host,
         address: address,
-        statement: "Sign in with Ethereum to the app.",
+        statement: "Sign in with Ethereum to the NOX platform.",
         uri: window.location.origin,
         version: "1",
         chainId: chain?.id,
@@ -171,8 +172,8 @@ function Sign() {
               )}
               {isConnected && !session && (
                 <button
-                  className={`${userExists && "bg-[#FF7A01]"} ${
-                    userNameValid && !userExists && "bg-gray-300"
+                  className={`bg-blue-500 ${userExists && "bg-[#FF7A01]"} ${
+                    !userNameValid && !userExists && "bg-gray-300"
                   } px-4 py-2 mt-5 rounded-xl float-right`}
                   type="submit"
                   disabled={!userNameValid && !userExists}
