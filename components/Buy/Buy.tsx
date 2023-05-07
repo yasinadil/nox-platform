@@ -24,11 +24,11 @@ function Buy() {
   const [approving, setApproving] = useState(false);
   const [swapping, setSwapping] = useState(false);
   const { address, isConnected } = useAccount();
-  const zeroxapi = "https://goerli.api.0x.org";
+  const zeroxapi = "https://mumbai.api.0x.org";
 
   const settings = {
     apiKey: process.env.NEXT_PUBLIC_AlchemyAPI,
-    network: Network.ETH_GOERLI,
+    network: Network.MATIC_MUMBAI,
   };
 
   const alchemy = new Alchemy(settings);
@@ -64,23 +64,10 @@ function Buy() {
 
   const getWETHBalance = async () => {
     if (address != undefined) {
-      const balanceWETH = await alchemy.core.getTokenBalances(address, [
-        WETH_TokenAddress,
-      ]);
-
-      balanceWETH.tokenBalances.find((item) => {
-        const value = BigNumber.from(item.tokenBalance);
-        const formatBalance = ethers.utils.formatEther(value);
-        let balance = Number(formatBalance).toFixed(4);
-        if (
-          item.tokenBalance ===
-          "0x0000000000000000000000000000000000000000000000000000000000000000"
-        ) {
-          setUserBalance("0");
-        } else {
-          setUserBalance(balance.toString());
-        }
-      });
+      let response = await alchemy.core.getBalance(address, "latest");
+      const formatBalance = ethers.utils.formatEther(response.toString());
+      const further = Number(formatBalance).toFixed(5);
+      setUserBalance(further.toString());
     }
   };
 
@@ -214,7 +201,7 @@ function Buy() {
       <div className="flex justify-center">
         <div className="border-4 border-[#8E00FE] desktop:px-12 mobile:px-3 desktop:py-12 tablet:py-4 mobile:py-12 rounded-3xl">
           <p className="text-center pb-8 font-semibold desktop:text-2xl laptop:text-2xl tablet:text-xl mobile:text-xl">
-            Swap WETH to NOX
+            Swap MATIC to NOX
           </p>
           <form onSubmit={(event) => swap(event)}>
             <div className="form-control">
@@ -240,7 +227,7 @@ function Buy() {
                     }
                   }}
                 />
-                <span className="text-gray-700">WETH</span>
+                <span className="text-gray-700">MATIC</span>
               </label>
               <label className="label">
                 <span className="label-text-alt text-white">

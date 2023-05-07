@@ -10,7 +10,11 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^4.16.4",
+    "@emotion/react": "^11.10.8",
+    "@emotion/styled": "^11.10.8",
     "@moralisweb3/next": "^2.14.3",
+    "@mui/icons-material": "^5.11.16",
+    "@mui/material": "^5.12.3",
     "@next/font": "13.1.6",
     "@rainbow-me/rainbowkit": "^0.8.1",
     "@types/node": "18.11.18",

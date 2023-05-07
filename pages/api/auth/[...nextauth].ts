@@ -1,10 +1,8 @@
-import NextAuth from "next-auth"
-import CredentialsProvider from "next-auth/providers/credentials"
-import { getCsrfToken } from "next-auth/react"
-import { SiweMessage } from "siwe"
+import NextAuth from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { getCsrfToken } from "next-auth/react";
+import { SiweMessage } from "siwe";
 
-// For more information on each option (and a full list of options) go to
-// https://next-auth.js.org/configuration/options
 export default async function auth(req: any, res: any) {
   const providers = [
     CredentialsProvider({
@@ -23,34 +21,36 @@ export default async function auth(req: any, res: any) {
       },
       async authorize(credentials) {
         try {
-          const siwe = new SiweMessage(JSON.parse(credentials?.message || "{}"))
-          const nextAuthUrl = new URL(process.env.NEXT_PUBLIC_NEXTAUTH_URL!)
+          const siwe = new SiweMessage(
+            JSON.parse(credentials?.message || "{}")
+          );
+          const nextAuthUrl = new URL(process.env.NEXT_PUBLIC_NEXTAUTH_URL!);
 
           const result = await siwe.verify({
             signature: credentials?.signature || "",
             domain: nextAuthUrl.host,
             nonce: await getCsrfToken({ req }),
-          })
+          });
 
           if (result.success) {
             return {
               id: siwe.address,
-            }
+            };
           }
-          return null
+          return null;
         } catch (e) {
-          return null
+          return null;
         }
       },
     }),
-  ]
+  ];
 
   const isDefaultSigninPage =
-    req.method === "GET" && req.query.nextauth.includes("signin")
-    
+    req.method === "GET" && req.query.nextauth.includes("signin");
+
   // Hide Sign-In with Ethereum from default sign page
   if (isDefaultSigninPage) {
-    providers.pop()
+    providers.pop();
   }
 
   return await NextAuth(req, res, {
@@ -62,11 +62,11 @@ export default async function auth(req: any, res: any) {
     secret: process.env.NEXT_PUBLIC_NEXTAUTH_SECRET,
     callbacks: {
       async session({ session, token }: { session: any; token: any }) {
-        session.address = token.sub
-        session.user.name = token.sub
-        session.user.image = "https://www.fillmurray.com/128/128"
-        return session
+        session.address = token.sub;
+        session.user.name = token.sub;
+        session.user.image = "https://www.fillmurray.com/128/128";
+        return session;
       },
     },
-  })
+  });
 }

@@ -1,4 +1,4 @@
-export const noxTokenAddress = "0x385A96b35bdbC919D0Bd95670461CB2153813C71";
-export const WETH_TokenAddress = "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6";
-export const noxNFTAddress = "0x3dE63D1da4639D24a65178ceb383A75003B71027";
-export const noxPlatform = "0x5730E5C8a37B6f24827809628022ADaF36139111";
+export const noxTokenAddress = "0x71411f2bbDAb65DfEC57BeC13C0E35A73E51d896";
+export const WETH_TokenAddress = "MATIC";
+export const noxNFTAddress = "0x6692e5aB16FCC1cDbe9c9a07A29BC4F9A4410C67";
+export const noxPlatform = "0x100e0567407126B62a711A549980d1f75Cd08AD8";

@@ -61,35 +61,6 @@ function Sign() {
     }
   };
 
-  // useEffect(() => {
-  //   if (isConnected && session && userExists) {
-  //     router.replace("/swap");
-  //   }
-  //   const register = async () => {
-  //     if (isConnected && session && !userExists) {
-  //       const encKey = await (window as any).ethereum.request({
-  //         method: "eth_getEncryptionPublicKey",
-  //         params: [address], // you must have access to the specified account
-  //       });
-  //       setEKey(encKey);
-  //       console.log(encKey);
-  //       if (encKey !== "" && session && !userExists && isConnected) {
-  //         add();
-  //       }
-  //     }
-  //   };
-  //   register();
-  // }, [isConnected, address, session, userExists]);
-
-  // useEffect(() => {
-  //   async function addUser() {
-  //     if (eKey !== "" && session && !userExists && isConnected) {
-  //       add();
-  //     }
-  //   }
-  //   addUser();
-  // }, [eKey]);
-
   const add = async () => {
     fetch("/api/create/add", {
       method: "POST",

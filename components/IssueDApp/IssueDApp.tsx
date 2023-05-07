@@ -6,7 +6,18 @@ import { Web3Storage } from "web3.storage";
 import { ToastContainer, toast } from "react-toastify";
 import { noxPlatform } from "../../Config";
 import "react-toastify/dist/ReactToastify.css";
+import DoneIcon from "@mui/icons-material/Done";
+import CancelIcon from "@mui/icons-material/Cancel";
+const ethUtil = require("ethereumjs-util");
+const sigUtil = require("@metamask/eth-sig-util");
 const noxPlatformABI = require("../../components/ABI/noxPlatformABI.json");
+
+interface User {
+  name: string;
+  walletAddress: string;
+  internalWalletAddress: string;
+  publicKey: string;
+}
 
 function Issue() {
   const { address, isConnected } = useAccount();
@@ -15,6 +26,29 @@ function Issue() {
   const [fileDesc, setFileDesc] = useState("");
   const [fileState, setFile] = useState<FileList | null>(null);
   const [isChecked, setIsChecked] = useState(false);
+  const [search, setSearch] = useState<User | null>(null);
+
+  const findUserKey = async (searchWallet) => {
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    fetch("/api/getUserEncKey", {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({
+        walletAddress: searchWallet,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data.message);
+        if (data.message === "User not found") {
+          setSearch(null);
+        } else {
+          setSearch(data.message);
+        }
+      });
+  };
 
   const handleCheckboxChange = (event) => {
     setIsChecked(event.target.checked);
@@ -108,9 +142,28 @@ function Issue() {
     const signer = provider.getSigner();
     let contract = new ethers.Contract(noxPlatform, noxPlatformABI, signer);
     try {
-      if (isChecked) {
-        //encrypt url
-        const response = await contract.issue(issuee, fileDesc, url, isChecked);
+      //encrypt url
+      if (isChecked && search !== null) {
+        const encryptedMessage = ethUtil.bufferToHex(
+          Buffer.from(
+            JSON.stringify(
+              sigUtil.encrypt({
+                publicKey: search.publicKey,
+                data: url,
+                version: "x25519-xsalsa20-poly1305",
+              })
+            ),
+            "utf8"
+          )
+        );
+        console.log(encryptedMessage);
+
+        const response = await contract.issue(
+          issuee,
+          fileDesc,
+          encryptedMessage,
+          isChecked
+        );
         await provider.waitForTransaction(response.hash);
       } else {
         const response = await contract.issue(issuee, fileDesc, url, isChecked);
@@ -175,11 +228,36 @@ function Issue() {
                     className="border border-gray-400 p-2 w-[50vw] rounded-2xl text-black"
                     type="text"
                     value={issueeWallet}
-                    onChange={(e) => setIssueeWallet(e.target.value)}
+                    onChange={(e) => {
+                      setIssueeWallet(e.target.value);
+                      setTimeout(async () => {
+                        await findUserKey(e.target.value);
+                      }, 1000);
+                    }}
                     placeholder="Enter issuee wallet address"
                     required
                   />
                 </div>
+                {search !== null && (
+                  <div className="bg-white rounded-lg p-2 text-black shadow">
+                    <div className="flex gap-x-2 items-center">
+                      {" "}
+                      <p className="text-lg">User Found</p> <DoneIcon />
+                    </div>
+
+                    <p className="text-xl">Name: {search.name}</p>
+                    <p className="text-xl">
+                      Wallet Address: {search.walletAddress}
+                    </p>
+                  </div>
+                )}
+
+                {search === null && issueeWallet !== "" && (
+                  <div className="flex gap-x-2 bg-white text-black p-2 rounded-lg items-center">
+                    {" "}
+                    <p className="text-lg">User Not Found</p> <CancelIcon />
+                  </div>
+                )}
 
                 <p className="my-4 desktop:text-base mobile:text-sm">
                   Upload document
@@ -255,19 +333,3 @@ function Issue() {
   );
 }
 export default Issue;
-
-// const key = process.env.NEXT_PUBLIC_ENCKEY;
-
-// const handleDecrypt = () => {
-//   const decipher = crypto.createDecipher("aes-256-cbc", key);
-//   let decrypted = decipher.update(
-//     userDetails.privateKey,
-//     "hex",
-//     "utf-8"
-//   );
-//   decrypted += decipher.final("utf-8");
-//   return decrypted;
-// };
-
-// const decryptedPrivateKey = handleDecrypt();
-// console.log(decryptedPrivateKey);

@@ -39,7 +39,7 @@ function Account({ params }: any) {
 
   async function loadNftData() {
     const provider = new ethers.providers.JsonRpcProvider(
-      `https://eth-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_AlchemyAPI}`
+      `https://polygon-mumbai.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_AlchemyAPI}`
     );
     const sbtContract = new ethers.Contract(noxNFTAddress, noxSbtABI, provider);
     const owned: number[] = await sbtContract.walletOfOwner(w_address);
@@ -78,7 +78,7 @@ function Account({ params }: any) {
         </div>
         <p className="text-xl ml-6">Unnamed </p>
         <Link
-          href={`https://goerli.etherscan.io/address/${w_address}`}
+          href={`https://https://mumbai.polygonscan.com/address/${w_address}`}
           className="ml-6 link link-info text-white"
         >
           {" "}

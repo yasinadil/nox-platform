@@ -9,11 +9,10 @@ import {
   Theme,
 } from "@rainbow-me/rainbowkit";
 import { configureChains, createClient, WagmiConfig } from "wagmi";
-import { goerli } from "wagmi/chains";
+import { polygonMumbai } from "wagmi/chains";
 import { alchemyProvider } from "wagmi/providers/alchemy";
 import { publicProvider } from "wagmi/providers/public";
 import { SessionProvider } from "next-auth/react";
-import { ClerkProvider } from "@clerk/nextjs/app-beta";
 
 const myCustomTheme: Theme = {
   blurs: {
@@ -72,7 +71,7 @@ const myCustomTheme: Theme = {
 };
 
 const { chains, provider, webSocketProvider } = configureChains(
-  [goerli],
+  [polygonMumbai],
   [
     alchemyProvider({
       apiKey: process.env.NEXT_PUBLIC_AlchemyAPI ?? "",
@@ -102,7 +101,7 @@ export default function RootLayout({
     <>
       <html lang="en">
         <head />
-        {/* <ClerkProvider> */}
+
         <body cz-shortcut-listen="true">
           <ToastContainer
             position="top-right"
@@ -124,7 +123,6 @@ export default function RootLayout({
             </SessionProvider>
           </WagmiConfig>
         </body>
-        {/* </ClerkProvider> */}
       </html>
     </>
   );

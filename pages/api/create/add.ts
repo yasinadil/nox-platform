@@ -2,9 +2,6 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import connectMongo from "../../../utils/connectMongo";
 import { User } from "../../../models/userModel";
 import { ethers } from "ethers";
-import crypto from "crypto";
-import eccrypto from "eccrypto";
-import Wallet from "ethereumjs-wallet";
 
 export default async function handler(
   req: NextApiRequest,
@@ -59,9 +56,4 @@ export default async function handler(
   } else {
     return res.status(400).json({ message: "Wrong request" });
   }
-
-  // const submit = await User.create(req.body);
-  // mongoose.connection.close(() => {
-  //     console.log('Connection to database closed');
-  // });
 }
