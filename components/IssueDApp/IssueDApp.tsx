@@ -8,6 +8,7 @@ import { noxPlatform } from "../../Config";
 import "react-toastify/dist/ReactToastify.css";
 import DoneIcon from "@mui/icons-material/Done";
 import CancelIcon from "@mui/icons-material/Cancel";
+import Link from "next/link";
 const ethUtil = require("ethereumjs-util");
 const sigUtil = require("@metamask/eth-sig-util");
 const noxPlatformABI = require("../../components/ABI/noxPlatformABI.json");
@@ -28,6 +29,7 @@ function Issue() {
   const [isChecked, setIsChecked] = useState(false);
   const [search, setSearch] = useState<User | null>(null);
   const [newLink, setNewLink] = useState("");
+  const [generateLink, setGenerateLink] = useState(false);
 
   const findUserKey = async (searchWallet) => {
     const headers = {
@@ -211,7 +213,8 @@ function Issue() {
                 isChecked
               );
               await provider.waitForTransaction(response.hash);
-              return data.message;
+              setGenerateLink(true);
+              await getNewTokenID();
             }
           });
       } else {
@@ -223,8 +226,9 @@ function Issue() {
           isChecked
         );
         await provider.waitForTransaction(response.hash);
+        setGenerateLink(true);
+        await getNewTokenID();
       }
-      await getNewTokenID();
     } catch (error: any) {
       console.log(error);
 
@@ -382,7 +386,12 @@ function Issue() {
                     Issue
                   </button>
                 </div>
-                <div>You can view the issued document at: {newLink}</div>
+                {generateLink && (
+                  <div className="mt-3">
+                    You can view the issued document at:{" "}
+                    <Link href={newLink}>{newLink}</Link>
+                  </div>
+                )}
               </div>
             </form>
           </div>

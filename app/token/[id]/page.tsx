@@ -9,6 +9,8 @@ import placeholderImg from "/assets/img-placeholder.png";
 import share from "/assets/share.png";
 import Image from "next/image";
 import truncateEthAddress from "truncate-eth-address";
+import DoneIcon from "@mui/icons-material/Done";
+import CancelIcon from "@mui/icons-material/Cancel";
 
 const noxSbtABI = require("/components/ABI/noxSbtABI.json");
 const noxPlatformABI = require("/components/ABI/noxPlatformABI.json");
@@ -144,15 +146,18 @@ function NFTPage({ params }: any) {
       .then((response) => response.json())
       .then((data) => {
         console.log(data.message);
-        if (data.message === "User not found") {
+        if (
+          data.message === "User not found" ||
+          data.message.name != instituteName ||
+          data.message.walletAddress != NFT.issuer
+        ) {
           setAuthenticationStatus("Not Authenticated");
-        } else {
-          if (
-            data.message.name === instituteName &&
-            data.message.walletAddress === NFT.issuer
-          )
-            setAuthenticationStatus("Authenticated");
-        }
+        } else if (
+          data.message.name === instituteName &&
+          data.message.walletAddress === NFT.issuer
+        )
+          setAuthenticationStatus("Authenticated");
+
         isAuthenticating(false);
       })
       .catch((e) => {
@@ -254,7 +259,17 @@ function NFTPage({ params }: any) {
             >
               {authenticating ? "Authenticating..." : "Authenticate"}
             </button>
-            <h1 className="mt-3">{authenticationStatus}</h1>
+
+            {authenticationStatus == "Authenticated" && (
+              <h1 className="mt-3 ml-4 flex items-center gap-x-2 text-green-500 font-semibold">
+                {authenticationStatus}
+              </h1>
+            )}
+            {authenticationStatus == "Not Authenticated" && (
+              <h1 className="mt-3 ml-4 flex items-center gap-x-2 text-red-500 font-semibold">
+                {authenticationStatus}
+              </h1>
+            )}
           </div>
         </div>
       </div>
