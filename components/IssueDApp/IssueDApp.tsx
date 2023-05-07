@@ -5,10 +5,10 @@ import { useAccount } from "wagmi";
 import { Web3Storage } from "web3.storage";
 import { ToastContainer, toast } from "react-toastify";
 import { noxPlatform } from "../../Config";
+import { useRouter } from "next/navigation";
 import "react-toastify/dist/ReactToastify.css";
 import DoneIcon from "@mui/icons-material/Done";
 import CancelIcon from "@mui/icons-material/Cancel";
-import Link from "next/link";
 const ethUtil = require("ethereumjs-util");
 const sigUtil = require("@metamask/eth-sig-util");
 const noxPlatformABI = require("../../components/ABI/noxPlatformABI.json");
@@ -30,6 +30,35 @@ function Issue() {
   const [search, setSearch] = useState<User | null>(null);
   const [newLink, setNewLink] = useState("");
   const [generateLink, setGenerateLink] = useState(false);
+  const router = useRouter();
+
+  const sendNotification = async (receipient) => {
+    const newID = await getNewTokenID();
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    fetch("/api/create/sendNotification", {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({
+        walletAddress: address,
+        recipientWalletAddress: receipient,
+        docID: newID,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data.message);
+        if (data.message === "Notification Sent") {
+          console.log("Successfully sent notification!");
+        } else {
+          console.log("Error Occurred");
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
 
   const findUserKey = async (searchWallet) => {
     const headers = {
@@ -59,7 +88,7 @@ function Issue() {
     let contract = new ethers.Contract(noxPlatform, noxPlatformABI, signer);
     let tokenid = await contract.docCount();
     const newTokenID = Number(tokenid) - 1;
-    setNewLink(`https://nox-platform.vercel.app/token/${newTokenID}`);
+    return newTokenID;
   };
 
   const handleCheckboxChange = (event) => {
@@ -213,8 +242,10 @@ function Issue() {
                 isChecked
               );
               await provider.waitForTransaction(response.hash);
+              await sendNotification(issuee);
+              const newID = await getNewTokenID();
+              setNewLink(`https://nox-platform.vercel.app/token/${newID}`);
               setGenerateLink(true);
-              await getNewTokenID();
             }
           });
       } else {
@@ -226,8 +257,10 @@ function Issue() {
           isChecked
         );
         await provider.waitForTransaction(response.hash);
+        await sendNotification(issuee);
+        const newID = await getNewTokenID();
+        setNewLink(`https://nox-platform.vercel.app/token/${newID}`);
         setGenerateLink(true);
-        await getNewTokenID();
       }
     } catch (error: any) {
       console.log(error);
@@ -389,9 +422,15 @@ function Issue() {
                 {generateLink && (
                   <div className="mt-3">
                     You can view the issued document at:{" "}
-                    <Link className="ml-2" href={newLink}>
-                      <span className="text-blue-600">{newLink}</span>
-                    </Link>
+                    <span
+                      onClick={async () => {
+                        const idNew = await getNewTokenID();
+                        router.push(`/token/${idNew}`);
+                      }}
+                      className="text-blue-600 cursor-pointer"
+                    >
+                      {newLink}
+                    </span>
                   </div>
                 )}
               </div>

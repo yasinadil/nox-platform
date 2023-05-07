@@ -53,16 +53,27 @@ function Account({ params }: any) {
 
       if (url.startsWith("ipfs://")) {
         url = `https://w3s.link/ipfs/${url.split("ipfs://")[1]}`;
+
+        const TokenMetadata = await fetch(url).then((response) =>
+          response.json()
+        );
+        let TokenImage = TokenMetadata.image;
+        let TokenName = TokenMetadata.name;
+        if (TokenImage.startsWith("ipfs://")) {
+          TokenImage = `https://w3s.link/ipfs/${
+            TokenImage.split("ipfs://")[1]
+          }`;
+        }
+        setNfts((nfts) => [...nfts, { name: TokenName, img: TokenImage }]);
+      } else if (url === "Private") {
+        setNfts((nfts) => [
+          ...nfts,
+          {
+            name: "Private",
+            img: "https://w3s.link/ipfs/bafkreicforix5h2z4r5hgzwuglo5nuc5q6fixr43ijmv2oav4m72g77dry/",
+          },
+        ]);
       }
-      const TokenMetadata = await fetch(url).then((response) =>
-        response.json()
-      );
-      let TokenImage = TokenMetadata.image;
-      let TokenName = TokenMetadata.name;
-      if (TokenImage.startsWith("ipfs://")) {
-        TokenImage = `https://w3s.link/ipfs/${TokenImage.split("ipfs://")[1]}`;
-      }
-      setNfts((nfts) => [...nfts, { name: TokenName, img: TokenImage }]);
     }
     isLoading(false);
   }

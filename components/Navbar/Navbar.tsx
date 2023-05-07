@@ -5,19 +5,98 @@ import Link from "next/link";
 import Image from "next/image";
 import Avatar from "../../assets/user.png";
 import "react-toastify/dist/ReactToastify.css";
-import logo from "../../assets/logo.png";
+import notification from "../../public/assets/notification.png";
+import newNotification from "../../public/assets/newNotification.png";
 import { useSession } from "next-auth/react";
 import { useAccount, useDisconnect } from "wagmi";
+import { useRouter } from "next/navigation";
+
+import DocumentScannerOutlinedIcon from "@mui/icons-material/DocumentScannerOutlined";
+
+export const NotificationCard = (props: any) => {
+  const router = useRouter();
+
+  const updateNotification = async (tokenIdentity: Number) => {
+    fetch("/api/updateNotification", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        docID: tokenIdentity,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.message != "Error Ocurred") {
+          console.log(data.message);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+  return (
+    <li>
+      <div
+        className="cursor-pointer"
+        onClick={async () => {
+          updateNotification(props.tokenID);
+          router.push(`/token/${props.tokenID}`);
+        }}
+      >
+        <DocumentScannerOutlinedIcon />
+        {props.message}
+        {!props.read && (
+          <div className="badge badge-primary bg-blue-500 float-right">NEW</div>
+        )}
+      </div>
+    </li>
+  );
+};
 
 function Navbar() {
   const [userAddress, setUserAddress] = useState("");
   const { address, isConnected } = useAccount();
   const { data: session, status } = useSession();
   const { disconnect } = useDisconnect();
+  const [notifications, setNotifications] = useState([]);
+  const [notiRead, setNotiRead] = useState(true);
 
   useEffect(() => {
     if (isConnected && address != undefined) {
       setUserAddress(address);
+      const getNotifications = async () => {
+        fetch("/api/readNotifications", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            walletAddress: address,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+
+            if (data.message != "No Notifications Found") {
+              console.log(data.message);
+              const allnotifications = data.message;
+              allnotifications.map((noti) => {
+                if (!noti.read) {
+                  setNotiRead(false);
+                }
+              });
+
+              setNotifications(data.message);
+            }
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+      };
+      getNotifications();
     }
   }, [isConnected, address]);
 
@@ -53,28 +132,52 @@ function Navbar() {
           </Link>
         )}
 
-        {/* <ConnectButton /> */}
+        <div className="dropdown dropdown-end">
+          <label tabIndex={0} className="m-1">
+            {notiRead ? (
+              <Image
+                className="cursor-pointer w-10 h-10"
+                src={notification}
+                alt="noti"
+              />
+            ) : (
+              <Image
+                className="cursor-pointer w-10 h-10"
+                src={newNotification}
+                alt="noti"
+              />
+            )}
+          </label>
+          <ul
+            tabIndex={0}
+            className="dropdown-content menu p-2 shadow bg-[#145365] rounded-box w-96"
+          >
+            {notifications.length > 0 ? (
+              notifications.map((noti: any, index) => {
+                return (
+                  <NotificationCard
+                    key={index}
+                    message={noti.message}
+                    tokenID={noti.docID}
+                    read={noti.read}
+                  />
+                );
+              })
+            ) : (
+              <li>No new notifications!</li>
+            )}
+          </ul>
+        </div>
+
         <div className="avatar online cursor-pointer">
           <div className=" rounded-full">
             {isConnected ? (
-              <Link href={`/account/${userAddress}`}>
-                <Image
-                  src={Avatar}
-                  alt="avatar"
-                  priority={true}
-                  width={40}
-                  height={30}
-                />
+              <Link className="w-60 h-60" href={`/account/${userAddress}`}>
+                <Image src={Avatar} alt="avatar" priority={true} />
               </Link>
             ) : (
-              <Link href={`/account`}>
-                <Image
-                  src={Avatar}
-                  alt="avatar"
-                  priority={true}
-                  width={40}
-                  height={30}
-                />
+              <Link className="w-60 h-60" href={`/account`}>
+                <Image src={Avatar} alt="avatar" priority={true} />
               </Link>
             )}
           </div>

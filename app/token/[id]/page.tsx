@@ -9,8 +9,7 @@ import placeholderImg from "/assets/img-placeholder.png";
 import share from "/assets/share.png";
 import Image from "next/image";
 import truncateEthAddress from "truncate-eth-address";
-import DoneIcon from "@mui/icons-material/Done";
-import CancelIcon from "@mui/icons-material/Cancel";
+import Link from "next/link";
 
 const noxSbtABI = require("/components/ABI/noxSbtABI.json");
 const noxPlatformABI = require("/components/ABI/noxPlatformABI.json");
@@ -28,6 +27,8 @@ function NFTPage({ params }: any) {
   const [instituteWalletAddress, setInstituteWalletAddress] = useState("");
   const [authenticationStatus, setAuthenticationStatus] = useState("");
   const [authenticating, isAuthenticating] = useState(false);
+  const [issuerName, setIssuerName] = useState("");
+  const [issueeName, setIssueeName] = useState("");
 
   const tokenId = params.id;
   const { address, isConnected } = useAccount();
@@ -37,6 +38,50 @@ function NFTPage({ params }: any) {
       loadNftData();
     }
   }, [tokenId]);
+
+  const getIssuerName = async (searchWallet) => {
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    fetch("/api/getUserEncKey", {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({
+        walletAddress: searchWallet,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data.message);
+        if (data.message === "User not found") {
+          setIssuerName("");
+        } else {
+          setIssuerName(data.message.name);
+        }
+      });
+  };
+
+  const getIssueeName = async (searchWallet) => {
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    fetch("/api/getUserEncKey", {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({
+        walletAddress: searchWallet,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data.message);
+        if (data.message === "User not found") {
+          setIssueeName("");
+        } else {
+          setIssueeName(data.message.name);
+        }
+      });
+  };
 
   async function loadNftData() {
     const provider = new ethers.providers.JsonRpcProvider(
@@ -80,7 +125,8 @@ function NFTPage({ params }: any) {
                 TokenImage.split("ipfs://")[1]
               }`;
             }
-
+            await getIssuerName(TokenMetadata.issuer);
+            await getIssueeName(TokenMetadata.issuee);
             setNFT({
               name: TokenName,
               img: TokenImage,
@@ -119,6 +165,8 @@ function NFTPage({ params }: any) {
       if (TokenImage.startsWith("ipfs://")) {
         TokenImage = `https://w3s.link/ipfs/${TokenImage.split("ipfs://")[1]}`;
       }
+      await getIssuerName(TokenMetadata.issuer);
+      await getIssueeName(TokenMetadata.issuee);
 
       setNFT({
         name: TokenName,
@@ -215,8 +263,18 @@ function NFTPage({ params }: any) {
               />
             </span>
           </div>
-          <p>Owned by: {truncateEthAddress(NFT.issuee)}</p>
-
+          <p>
+            Owned by:
+            {issueeName === "" ? (
+              <Link className="ml-2" href={`/account/${NFT.issuee}`}>
+                <span>{truncateEthAddress(NFT.issuee)}</span>
+              </Link>
+            ) : (
+              <Link className="ml-2" href={`/account/${NFT.issuee}`}>
+                <span>{issueeName}</span>
+              </Link>
+            )}
+          </p>
           <div className="mt-8">
             <h1 className="text-2xl"> Authenticate Document </h1>
             <div className="flex flex-col mb-6">
@@ -331,7 +389,10 @@ function NFTPage({ params }: any) {
               </p>
               {NFT.issuer != "" ? (
                 <p className="desktop:text-lg laptop:text-lg tablet:text-lg mobile:text-base">
-                  {truncateEthAddress(NFT.issuer)}
+                  <Link href={`/account/${NFT.issuer}`}>
+                    {" "}
+                    {truncateEthAddress(NFT.issuer)}
+                  </Link>
                 </p>
               ) : (
                 <div className="animate-pulse">
@@ -342,7 +403,9 @@ function NFTPage({ params }: any) {
               )}
               {NFT.issuee != "" ? (
                 <p className="desktop:text-lg laptop:text-lg tablet:text-lg mobile:text-base">
-                  {truncateEthAddress(NFT.issuee)}
+                  <Link href={`/account/${NFT.issuee}`}>
+                    {truncateEthAddress(NFT.issuee)}
+                  </Link>
                 </p>
               ) : (
                 <div className="animate-pulse">
