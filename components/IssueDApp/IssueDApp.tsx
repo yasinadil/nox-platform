@@ -317,6 +317,7 @@ function Issue() {
                       setIssueeWallet(e.target.value);
                       isloading(true);
                       setTimeout(async () => {
+                        setSearch(null);
                         await findUserKey(e.target.value);
                       }, 1000);
                       setTimeout(async () => {
