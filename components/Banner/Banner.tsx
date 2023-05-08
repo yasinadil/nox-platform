@@ -13,17 +13,19 @@ function Banner() {
                 Ethereum Blockchain.
               </p>
             </div>
-            <div className="mx-auto my-auto">
-              <div className="mockup-phone spin-image">
-                <div className="camera "></div>
-                <div className="display">
-                  <div className="artboard artboard-demo phone-1 bg-gray-800">
-                    <Image
-                      className="spin-logo"
-                      style={{ width: "12vh" }}
-                      src={polygon}
-                      alt="polygon"
-                    />
+            <div className="flex justify-end">
+              <div className="">
+                <div className="mockup-phone spin-image">
+                  <div className="camera "></div>
+                  <div className="display">
+                    <div className="artboard artboard-demo phone-1 bg-gray-800">
+                      <Image
+                        className="spin-logo"
+                        style={{ width: "12vh" }}
+                        src={polygon}
+                        alt="polygon"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -63,8 +65,10 @@ function Banner() {
 
 export default Banner;
 
-{/* <div className="hero min-h-screen bg-base-200">
+{
+  /* <div className="hero min-h-screen bg-base-200">
   <div className="hero-content text-center">
     <div className="max-w-md"></div>
   </div>
-</div>; */}
+</div>; */
+}
