@@ -436,38 +436,41 @@ function NFTPage({ params }: any) {
                 </h1>
               )}
             </div>
-            <div>
-              <div className="flex flex-col my-6">
-                <label className="desktop:text-base mobile:text-sm font-medium mb-2 md:mb-0 md:mr-6">
-                  Give Access
-                </label>
-                <input
-                  className="border border-gray-400 p-2 w-full rounded-2xl text-black"
-                  type="text"
-                  value={giveAccessWallet}
-                  onChange={(e) => {
-                    setTimeout(async () => {
-                      setSearch(null);
-                      await findUserKey(e.target.value);
-                    }, 1000);
 
-                    setGiveAccessWallet(e.target.value);
+            {address === NFT.issuee && (
+              <div>
+                <div className="flex flex-col my-6">
+                  <label className="desktop:text-base mobile:text-sm font-medium mb-2 md:mb-0 md:mr-6">
+                    Give Access
+                  </label>
+                  <input
+                    className="border border-gray-400 p-2 w-full rounded-2xl text-black"
+                    type="text"
+                    value={giveAccessWallet}
+                    onChange={(e) => {
+                      setTimeout(async () => {
+                        setSearch(null);
+                        await findUserKey(e.target.value);
+                      }, 1000);
+
+                      setGiveAccessWallet(e.target.value);
+                    }}
+                    placeholder="Enter Wallet Address..."
+                    required
+                  />
+                </div>
+                <button
+                  onClick={() => {
+                    setTimeout(async () => {
+                      giveAccess();
+                    }, 1000);
                   }}
-                  placeholder="Enter Wallet Address..."
-                  required
-                />
+                  className="bg-blue-500 text-white px-5 py-1 rounded-xl hover:bg-blue-600"
+                >
+                  {authenticating ? "Giving Access..." : "Give Access"}
+                </button>
               </div>
-              <button
-                onClick={() => {
-                  setTimeout(async () => {
-                    giveAccess();
-                  }, 1000);
-                }}
-                className="bg-blue-500 text-white px-5 py-1 rounded-xl hover:bg-blue-600"
-              >
-                {authenticating ? "Giving Access..." : "Give Access"}
-              </button>
-            </div>
+            )}
           </div>
         </div>
       </div>
