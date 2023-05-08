@@ -12,10 +12,10 @@ function Account() {
   console.log(status);
 
   useEffect(() => {
-    if (isConnected && session && status == "authenticated") {
+    if (isConnected && address) {
       router.replace(`/account/${address}`);
     }
-  }, [isConnected, address, router]);
+  }, [isConnected, address]);
   return (
     <div className="hero min-h-screen bg-[#120F22]">
       <div className="hero-content text-center">
