@@ -1,7 +1,7 @@
 "use client";
 import { useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import { noxNFTAddress } from "../../../Config";
+import { noxNFTAddress, noxPlatform } from "../../../Config";
 import { ethers, BigNumber } from "ethers";
 import { useAccount } from "wagmi";
 import truncateEthAddress from "truncate-eth-address";
@@ -14,6 +14,7 @@ import degree from "../../../assets/degree.png";
 import placeholderImg from "../../../assets/img-placeholder.png";
 
 const noxSbtABI = require("/components/ABI/noxSbtABI.json");
+const noxPlatformABI = require("/components/ABI/noxPlatformABI.json");
 
 function Account({ params }: any) {
   const [tokensOwned, setTokensOwned] = useState<number[]>([]);
@@ -66,13 +67,76 @@ function Account({ params }: any) {
         }
         setNfts((nfts) => [...nfts, { name: TokenName, img: TokenImage }]);
       } else if (url === "Private") {
-        setNfts((nfts) => [
-          ...nfts,
-          {
-            name: "Private",
-            img: "https://w3s.link/ipfs/bafkreicforix5h2z4r5hgzwuglo5nuc5q6fixr43ijmv2oav4m72g77dry/",
-          },
-        ]);
+        const provider = new ethers.providers.JsonRpcProvider(
+          `https://polygon-mumbai.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_AlchemyAPI}`
+        );
+
+        const platformContract = new ethers.Contract(
+          noxPlatform,
+          noxPlatformABI,
+          provider
+        );
+        const encrypted = await platformContract.encryptedUrls(
+          Number(owned[i]),
+          address
+        );
+
+        const headers = {
+          "Content-Type": "application/json",
+        };
+        fetch("/api/decryptURL", {
+          method: "POST",
+          headers: headers,
+          body: JSON.stringify({
+            walletAddress: address,
+            encryptedURL: encrypted,
+          }),
+        })
+          .then((response) => response.json())
+          .then(async (decryptedMessage) => {
+            console.log("The decrypted message is:", decryptedMessage.message);
+            url = `https://w3s.link/ipfs/${
+              decryptedMessage.message.split("ipfs://")[1]
+            }`;
+
+            const TokenMetadata = await fetch(url).then((response) =>
+              response.json()
+            );
+
+            let TokenImage = TokenMetadata.image;
+            let TokenName = TokenMetadata.name;
+            let TokenDescription = TokenMetadata.description;
+            let TokenIssuer = TokenMetadata.issuer;
+            let TokenIssuee = TokenMetadata.issuee;
+            let TokenDate = Number(TokenMetadata.date);
+            let tokendate = new Date(TokenDate * 1000);
+            if (TokenImage.startsWith("ipfs://")) {
+              TokenImage = `https://w3s.link/ipfs/${
+                TokenImage.split("ipfs://")[1]
+              }`;
+            }
+
+            setNfts((nfts) => [
+              ...nfts,
+              {
+                name: TokenName,
+                img: TokenImage,
+                description: TokenDescription,
+                issuer: TokenIssuer,
+                issuee: TokenIssuee,
+                date: tokendate.toLocaleDateString("en-GB"),
+              },
+            ]);
+          })
+          .catch((e) => console.log(e));
+
+        // setNfts((nfts) => [
+        //   ...nfts,
+        //   {
+        //     name: "Private",
+        //     img: "https://w3s.link/ipfs/bafkreicforix5h2z4r5hgzwuglo5nuc5q6fixr43ijmv2oav4m72g77dry/",
+        //   },
+        // ]);
       }
     }
     isLoading(false);

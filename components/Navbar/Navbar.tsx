@@ -3,13 +3,14 @@ import { useEffect, useState } from "react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
-import Avatar from "../../assets/user.png";
+import Avatar from "../../public/assets/avatar.png";
 import "react-toastify/dist/ReactToastify.css";
 import notification from "../../public/assets/notification.png";
 import newNotification from "../../public/assets/newNotification.png";
 import { useSession } from "next-auth/react";
 import { useAccount, useDisconnect } from "wagmi";
 import { useRouter } from "next/navigation";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 import DocumentScannerOutlinedIcon from "@mui/icons-material/DocumentScannerOutlined";
 
@@ -41,7 +42,7 @@ export const NotificationCard = (props: any) => {
       <div
         className="cursor-pointer"
         onClick={async () => {
-          updateNotification(props.tokenID);
+          await updateNotification(props.tokenID);
           router.push(`/token/${props.tokenID}`);
         }}
       >
@@ -136,13 +137,13 @@ function Navbar() {
           <label tabIndex={0} className="m-1">
             {notiRead ? (
               <Image
-                className="cursor-pointer w-10 h-10"
+                className="cursor-pointer w-8 h-8"
                 src={notification}
                 alt="noti"
               />
             ) : (
               <Image
-                className="cursor-pointer w-10 h-10"
+                className="cursor-pointer w-8 h-8"
                 src={newNotification}
                 alt="noti"
               />
@@ -172,12 +173,18 @@ function Navbar() {
         <div className="avatar online cursor-pointer">
           <div className=" rounded-full">
             {isConnected ? (
-              <Link className="w-60 h-60" href={`/account/${userAddress}`}>
-                <Image src={Avatar} alt="avatar" priority={true} />
+              <Link className="" href={`/account/${userAddress}`}>
+                <AccountCircleIcon
+                  fontSize="large"
+                  className="text-[#FF7A01]"
+                />
               </Link>
             ) : (
-              <Link className="w-60 h-60" href={`/account`}>
-                <Image src={Avatar} alt="avatar" priority={true} />
+              <Link className="" href={`/account`}>
+                <AccountCircleIcon
+                  fontSize="large"
+                  className="text-[#FF7A01]"
+                />
               </Link>
             )}
           </div>

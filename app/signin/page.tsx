@@ -15,6 +15,7 @@ function Sign() {
   const [userName, setUserName] = useState<string>("");
   const [userExists, setUserExists] = useState<boolean>(false);
   const [userNameValid, setUserNameValid] = useState<boolean>(false);
+  const [loading, isloading] = useState(true);
   console.log(status);
 
   useEffect(() => {
@@ -36,6 +37,7 @@ function Sign() {
         .then((response) => response.json())
         .then((data) => {
           if (data.message === "User not found") {
+            isloading(false);
             const register = async () => {
               if (isConnected && session) {
                 add();
@@ -45,6 +47,7 @@ function Sign() {
           }
           if (data.message === "User already exists") {
             setUserExists(true);
+            isloading(false);
             if (isConnected && session) {
               router.replace("/swap");
             }
@@ -122,44 +125,52 @@ function Sign() {
           </p>
           <div className="text-left">
             <form onSubmit={(e) => handleLogin(e)}>
-              {isConnected && !userExists && (
-                <input
-                  type="text"
-                  placeholder="Enter your name here..."
-                  className="input input-bordered input-primary w-full my-2 bg-transparent"
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    setUserName(val);
-                    if (val.length >= 4) {
-                      setUserNameValid(true);
-                    }
-                  }}
-                  required
-                />
+              {loading && isConnected ? (
+                <button className="loading"></button>
+              ) : (
+                isConnected &&
+                !userExists && (
+                  <input
+                    type="text"
+                    placeholder="Enter your name here..."
+                    className="input input-bordered input-primary w-full my-2 bg-transparent"
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setUserName(val);
+                      if (val.length >= 4) {
+                        setUserNameValid(true);
+                      }
+                    }}
+                    required
+                  />
+                )
               )}
 
-              {userName.length <= 3 && isConnected && !userExists && (
-                <div className="alert alert-warning shadow-lg desktop:h-3 laptop:h-3 tablet:h-3 mobile:h-18">
-                  <div>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="stroke-current flex-shrink-0 h-6 w-6"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                      />
-                    </svg>
-                    <span className="text-sm">
-                      Warning: Name must be atleast 4 characters long!
-                    </span>
+              {userName.length <= 3 &&
+                isConnected &&
+                !userExists &&
+                !loading && (
+                  <div className="alert alert-warning shadow-lg desktop:h-3 laptop:h-3 tablet:h-3 mobile:h-18">
+                    <div>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="stroke-current flex-shrink-0 h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                        />
+                      </svg>
+                      <span className="text-sm">
+                        Warning: Name must be atleast 4 characters long!
+                      </span>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
               {isConnected && !session && (
                 <button
                   className={`bg-blue-500 ${userExists && "bg-[#FF7A01]"} ${

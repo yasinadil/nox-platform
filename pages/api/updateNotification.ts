@@ -10,12 +10,12 @@ export default async function handler(
   if (req.method === "POST") {
     const { docID: documentID } = req.body;
 
-    if (!documentID) {
-      console.log("Not enough information provided.");
-      return res
-        .status(400)
-        .json({ message: "Not enough information provided." });
-    }
+    // if (!documentID) {
+    //   console.log("Not enough information provided.");
+    //   return res
+    //     .status(400)
+    //     .json({ message: "Not enough information provided." });
+    // }
 
     try {
       await connectMongo();
