@@ -1,10 +1,8 @@
 "use client";
-import { useState } from "react";
+import React from "react";
+import HistoryDApp from "@/components/HistoryDApp/HistoryDApp";
 import Link from "next/link";
-import { Web3Storage } from "web3.storage";
 import Image from "next/image";
-import IssueDApp from "../../components/IssueDApp/IssueDApp";
-import upload from "../../assets/upload.png";
 import logo from "../../assets/logo.png";
 import twitter from "../../assets/twitter.png";
 import facebook from "../../assets/facebook.png";
@@ -14,7 +12,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-function Issue() {
+export default function History() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
@@ -34,10 +32,11 @@ function Issue() {
       </div>
     );
   }
+
   return (
-    <div className="bg-[#120F22] grid desktop:grid-cols-5 laptop:grid-cols-5 mobile:grid-cols-5 desktop:gap-4 mobile:gap-0">
+    <div className="bg-[#120F22] grid desktop:grid-cols-5 mobile:grid-cols-5 desktop:gap-4 mobile:gap-0 min-h-screen">
       <div className="text-center border-r-2 border-[#7000FF]">
-        <div className="desktop:col-span-1 laptop:col-span-1 mobile:col-span-2">
+        <div className="desktop:col-span-1 mobile:col-span-2">
           <div className="desktop:py-24 mobile:py-20">
             <Link className="title desktop:text-4xl mobile:text-xl" href="/">
               Nox
@@ -49,7 +48,7 @@ function Issue() {
               <li className="border-t-2 border-[#7000FF]">
                 <Link
                   href="/swap"
-                  className="flex cursor-pointer justify-center py-3 bg-transparent"
+                  className="flex cursor-pointer justify-center py-3"
                 >
                   Swap
                 </Link>
@@ -57,15 +56,15 @@ function Issue() {
               <li className="border-t-2 border-b-2 border-[#7000FF]">
                 <Link
                   href="/issue"
-                  className="flex cursor-pointer justify-center py-3 bg-[#2E2BC9]"
+                  className="flex cursor-pointer justify-center py-3 bg-transparent"
                 >
                   Issue
                 </Link>
               </li>
-              <li className=" border-b-2 border-[#7000FF]">
+              <li className="border-t-2 border-b-2 border-[#7000FF]">
                 <Link
                   href="/history"
-                  className="flex cursor-pointer justify-center py-3"
+                  className="flex cursor-pointer justify-center py-3 bg-[#2E2BC9]"
                 >
                   History
                 </Link>
@@ -76,7 +75,7 @@ function Issue() {
         <div className="flex justify-center desktop:mt-[20vh] laptop:mt-[16vh] mobile:mt-12">
           <Image className="" style={{ width: "12vh" }} src={logo} alt="logo" />
         </div>
-        <div className="mt-6 desktop:visible mobile:invisible">
+        <div className="mt-6">
           <Image
             className="inline mx-3"
             style={{ width: "4vh" }}
@@ -106,10 +105,7 @@ function Issue() {
           />
         </div>
       </div>
-
-      <IssueDApp />
+      <HistoryDApp />
     </div>
   );
 }
-
-export default Issue;

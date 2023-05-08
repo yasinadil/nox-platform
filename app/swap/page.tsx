@@ -60,6 +60,14 @@ function Swap() {
                   Issue
                 </Link>
               </li>
+              <li className="border-b-2 border-[#7000FF]">
+                <Link
+                  href="/history"
+                  className="flex cursor-pointer justify-center py-3"
+                >
+                  History
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
