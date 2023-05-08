@@ -10,9 +10,18 @@ import share from "/assets/share.png";
 import Image from "next/image";
 import truncateEthAddress from "truncate-eth-address";
 import Link from "next/link";
+import { ToastContainer, toast } from "react-toastify";
+import EthCrypto from "eth-crypto";
 
 const noxSbtABI = require("/components/ABI/noxSbtABI.json");
 const noxPlatformABI = require("/components/ABI/noxPlatformABI.json");
+
+interface User {
+  name: string;
+  walletAddress: string;
+  internalWalletAddress: string;
+  publicKey: string;
+}
 
 function NFTPage({ params }: any) {
   const [NFT, setNFT] = useState({
@@ -29,6 +38,9 @@ function NFTPage({ params }: any) {
   const [authenticating, isAuthenticating] = useState(false);
   const [issuerName, setIssuerName] = useState("");
   const [issueeName, setIssueeName] = useState("");
+  const [giveAccessWallet, setGiveAccessWallet] = useState("");
+  const [urlAccess, setURLAccess] = useState("");
+  const [search, setSearch] = useState<User | null>(null);
 
   const tokenId = params.id;
   const { address, isConnected } = useAccount();
@@ -113,6 +125,7 @@ function NFTPage({ params }: any) {
           // console.log('The decrypted message is:', decryptedMessage)
           {
             console.log("The decrypted message is:", decryptedMessage);
+            setURLAccess(decryptedMessage.message);
             url = `https://w3s.link/ipfs/${
               decryptedMessage.message.split("ipfs://")[1]
             }`;
@@ -222,6 +235,91 @@ function NFTPage({ params }: any) {
       });
   };
 
+  const findUserKey = async (searchWallet) => {
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    fetch("/api/getUserEncKey", {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({
+        walletAddress: searchWallet,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data.message);
+        if (data.message === "User not found") {
+          setSearch(null);
+        } else {
+          setSearch(data.message);
+        }
+      });
+  };
+
+  const giveAccess = async () => {
+    const provider = new ethers.providers.Web3Provider(
+      (window as any).ethereum
+    );
+    const signer = provider.getSigner();
+
+    const platformContract = new ethers.Contract(
+      noxPlatform,
+      noxPlatformABI,
+      signer
+    );
+    try {
+      // const encryptedMessage = await EthCrypto.encryptWithPublicKey(
+      //   search.publicKey, // encrypt
+      //   urlAccess
+      // );
+      // console.log(JSON.stringify(encryptedMessage));
+
+      const headers = {
+        "Content-Type": "application/json",
+      };
+      fetch("/api/getUserEncKey", {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify({
+          walletAddress: giveAccessWallet,
+        }),
+      })
+        .then((response) => response.json())
+        .then(async (data) => {
+          console.log(data.message);
+          if (data.message === "User not found") {
+            toast.error("User Not Found!", {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+            });
+          } else {
+            console.log("url" + urlAccess);
+
+            const encryptedMessage = await EthCrypto.encryptWithPublicKey(
+              data.message.publicKey, // encrypt
+              urlAccess
+            );
+
+            console.log(JSON.stringify(encryptedMessage));
+
+            const tx = await platformContract.giveAccess(
+              tokenId,
+              giveAccessWallet,
+              JSON.stringify(encryptedMessage)
+            );
+            await provider.waitForTransaction(tx.hash);
+          }
+        });
+    } catch (error) {}
+  };
+
   return (
     <div className="text-white bg-[#120F22] justify-start">
       <Navbar />
@@ -300,42 +398,76 @@ function NFTPage({ params }: any) {
                 required
               />
             </div>
-            <div className="flex flex-col mb-6">
-              <label className="desktop:text-base mobile:text-sm font-medium mb-2 md:mb-0 md:mr-6">
-                Issuer&apos; Wallet Address:
-              </label>
-              <input
-                className="border border-gray-400 p-2 w-full rounded-2xl text-black"
-                type="text"
-                value={instituteWalletAddress}
-                onChange={(e) => {
-                  setInstituteWalletAddress(e.target.value);
+            <div>
+              <div className="flex flex-col mb-6">
+                <label className="desktop:text-base mobile:text-sm font-medium mb-2 md:mb-0 md:mr-6">
+                  Issuer&apos; Wallet Address:
+                </label>
+                <input
+                  className="border border-gray-400 p-2 w-full rounded-2xl text-black"
+                  type="text"
+                  value={instituteWalletAddress}
+                  onChange={(e) => {
+                    setInstituteWalletAddress(e.target.value);
+                  }}
+                  placeholder="Enter Issuer's Wallet Address"
+                  required
+                />
+              </div>
+              <button
+                onClick={() => {
+                  setTimeout(async () => {
+                    authenticate();
+                  }, 1000);
                 }}
-                placeholder="Enter Issuer's Wallet Address"
-                required
-              />
-            </div>
-            <button
-              onClick={() => {
-                setTimeout(async () => {
-                  authenticate();
-                }, 1000);
-              }}
-              className="bg-blue-500 text-white px-5 py-1 rounded-xl hover:bg-blue-600"
-            >
-              {authenticating ? "Authenticating..." : "Authenticate"}
-            </button>
+                className="bg-blue-500 text-white px-5 py-1 rounded-xl hover:bg-blue-600"
+              >
+                {authenticating ? "Authenticating..." : "Authenticate"}
+              </button>
 
-            {authenticationStatus == "Authenticated" && (
-              <h1 className="mt-3 ml-4 flex items-center gap-x-2 text-green-500 font-semibold">
-                {authenticationStatus}
-              </h1>
-            )}
-            {authenticationStatus == "Not Authenticated" && (
-              <h1 className="mt-3 ml-4 flex items-center gap-x-2 text-red-500 font-semibold">
-                {authenticationStatus}
-              </h1>
-            )}
+              {authenticationStatus == "Authenticated" && (
+                <h1 className="mt-3 ml-4 flex items-center gap-x-2 text-green-500 font-semibold">
+                  {authenticationStatus}
+                </h1>
+              )}
+              {authenticationStatus == "Not Authenticated" && (
+                <h1 className="mt-3 ml-4 flex items-center gap-x-2 text-red-500 font-semibold">
+                  {authenticationStatus}
+                </h1>
+              )}
+            </div>
+            <div>
+              <div className="flex flex-col my-6">
+                <label className="desktop:text-base mobile:text-sm font-medium mb-2 md:mb-0 md:mr-6">
+                  Give Access
+                </label>
+                <input
+                  className="border border-gray-400 p-2 w-full rounded-2xl text-black"
+                  type="text"
+                  value={giveAccessWallet}
+                  onChange={(e) => {
+                    setTimeout(async () => {
+                      setSearch(null);
+                      await findUserKey(e.target.value);
+                    }, 1000);
+
+                    setGiveAccessWallet(e.target.value);
+                  }}
+                  placeholder="Enter Wallet Address..."
+                  required
+                />
+              </div>
+              <button
+                onClick={() => {
+                  setTimeout(async () => {
+                    giveAccess();
+                  }, 1000);
+                }}
+                className="bg-blue-500 text-white px-5 py-1 rounded-xl hover:bg-blue-600"
+              >
+                {authenticating ? "Giving Access..." : "Give Access"}
+              </button>
+            </div>
           </div>
         </div>
       </div>
