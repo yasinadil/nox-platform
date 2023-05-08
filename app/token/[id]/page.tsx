@@ -97,16 +97,24 @@ function NFTPage({ params }: any) {
         provider
       );
       const encrypted = await platformContract.encryptedUrls(tokenId, address);
-      (window as any).ethereum
-        .request({
-          method: "eth_decrypt",
-          params: [encrypted, address],
-        })
+      const headers = {
+        "Content-Type": "application/json",
+      };
+      fetch("/api/decryptURL", {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify({
+          walletAddress: address,
+          encryptedURL: encrypted,
+        }),
+      })
+        .then((response) => response.json())
         .then(async (decryptedMessage) =>
           // console.log('The decrypted message is:', decryptedMessage)
           {
+            console.log("The decrypted message is:", decryptedMessage.message);
             url = `https://w3s.link/ipfs/${
-              decryptedMessage.split("ipfs://")[1]
+              decryptedMessage.message.split("ipfs://")[1]
             }`;
 
             const TokenMetadata = await fetch(url).then((response) =>

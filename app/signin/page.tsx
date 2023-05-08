@@ -15,7 +15,6 @@ function Sign() {
   const [userName, setUserName] = useState<string>("");
   const [userExists, setUserExists] = useState<boolean>(false);
   const [userNameValid, setUserNameValid] = useState<boolean>(false);
-  const [eKey, setEKey] = useState<string>("");
   console.log(status);
 
   useEffect(() => {
@@ -39,15 +38,7 @@ function Sign() {
           if (data.message === "User not found") {
             const register = async () => {
               if (isConnected && session) {
-                const encKey = await (window as any).ethereum.request({
-                  method: "eth_getEncryptionPublicKey",
-                  params: [address], // you must have access to the specified account
-                });
-                setEKey(encKey);
-                console.log(encKey);
-                if (encKey && session && isConnected) {
-                  add(encKey);
-                }
+                add();
               }
             };
             register();
@@ -62,7 +53,7 @@ function Sign() {
     }
   };
 
-  const add = async (encrypKey: string) => {
+  const add = async () => {
     fetch("/api/create/add", {
       method: "POST",
       headers: {
@@ -71,7 +62,6 @@ function Sign() {
       body: JSON.stringify({
         name: userName,
         walletAddress: address,
-        encryptedPublicKey: encrypKey,
       }),
     })
       .then((response) => response.json())

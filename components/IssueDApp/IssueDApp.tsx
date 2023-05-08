@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import "react-toastify/dist/ReactToastify.css";
 import DoneIcon from "@mui/icons-material/Done";
 import CancelIcon from "@mui/icons-material/Cancel";
+import EthCrypto from "eth-crypto";
 const ethUtil = require("ethereumjs-util");
 const sigUtil = require("@metamask/eth-sig-util");
 const noxPlatformABI = require("../../components/ABI/noxPlatformABI.json");
@@ -185,18 +186,12 @@ function Issue() {
     try {
       //encrypt url
       if (isChecked && search !== null) {
-        const encryptedMessage = ethUtil.bufferToHex(
-          Buffer.from(
-            JSON.stringify(
-              sigUtil.encrypt({
-                publicKey: search.publicKey,
-                data: url,
-                version: "x25519-xsalsa20-poly1305",
-              })
-            ),
-            "utf8"
-          )
+        const encryptedMessage = await EthCrypto.encryptWithPublicKey(
+          search.publicKey, // encrypt
+          url
         );
+        console.log(JSON.stringify(encryptedMessage));
+
         const headers = {
           "Content-Type": "application/json",
         };
@@ -222,23 +217,17 @@ function Issue() {
                 theme: "light",
               });
             } else {
-              const encryptedMessageIssuer = ethUtil.bufferToHex(
-                Buffer.from(
-                  JSON.stringify(
-                    sigUtil.encrypt({
-                      publicKey: data.message.publicKey,
-                      data: url,
-                      version: "x25519-xsalsa20-poly1305",
-                    })
-                  ),
-                  "utf8"
-                )
-              );
+              const encryptedMessageIssuer =
+                await EthCrypto.encryptWithPublicKey(
+                  data.message.publicKey, // encrypt
+                  url
+                );
+              console.log(JSON.stringify(encryptedMessageIssuer));
               const response = await contract.issue(
                 issuee,
                 fileDesc,
-                encryptedMessage,
-                encryptedMessageIssuer,
+                JSON.stringify(encryptedMessage),
+                JSON.stringify(encryptedMessageIssuer),
                 isChecked
               );
               await provider.waitForTransaction(response.hash);
