@@ -112,7 +112,7 @@ function NFTPage({ params }: any) {
         .then(async (decryptedMessage) =>
           // console.log('The decrypted message is:', decryptedMessage)
           {
-            console.log("The decrypted message is:", decryptedMessage.message);
+            console.log("The decrypted message is:", decryptedMessage);
             url = `https://w3s.link/ipfs/${
               decryptedMessage.message.split("ipfs://")[1]
             }`;

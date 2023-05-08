@@ -41,10 +41,12 @@ export default async function handler(
           "utf8"
         );
         decryptedPrivateKey += decipher.final("utf8");
+        const formattedEURL = JSON.parse(encryptedURL);
+        console.log(typeof formattedEURL.mac);
 
         const decrypted = await EthCrypto.decryptWithPrivateKey(
           decryptedPrivateKey,
-          JSON.parse(encryptedURL)
+          formattedEURL
         );
         console.log(decrypted);
 
