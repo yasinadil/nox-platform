@@ -135,7 +135,7 @@ export default function HistoryDApp() {
                 );
               })
             ) : (
-              <li>No new notifications!</li>
+              <li className="p-2">No issuance history!</li>
             )}
           </ul>
         </div>
