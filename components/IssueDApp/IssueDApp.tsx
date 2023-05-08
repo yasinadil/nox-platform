@@ -31,6 +31,7 @@ function Issue() {
   const [search, setSearch] = useState<User | null>(null);
   const [newLink, setNewLink] = useState("");
   const [generateLink, setGenerateLink] = useState(false);
+  const [loading, isloading] = useState(false);
   const router = useRouter();
 
   const sendNotification = async (receipient) => {
@@ -314,15 +315,24 @@ function Issue() {
                     value={issueeWallet}
                     onChange={(e) => {
                       setIssueeWallet(e.target.value);
+                      isloading(true);
                       setTimeout(async () => {
                         await findUserKey(e.target.value);
+                        isloading(false);
                       }, 1000);
                     }}
                     placeholder="Enter issuee wallet address"
                     required
                   />
                 </div>
-                {search !== null && (
+
+                {loading && (
+                  <button type="button" className="text-white" disabled>
+                    Searching...
+                  </button>
+                )}
+
+                {search !== null && !loading && issueeWallet !== "" && (
                   <div className="bg-white rounded-lg p-2 text-black shadow">
                     <div className="flex gap-x-2 items-center">
                       {" "}
@@ -336,7 +346,7 @@ function Issue() {
                   </div>
                 )}
 
-                {search === null && issueeWallet !== "" && (
+                {search === null && issueeWallet !== "" && !loading && (
                   <div className="flex gap-x-2 bg-white text-black p-2 rounded-lg items-center">
                     {" "}
                     <p className="text-lg">User Not Found</p> <CancelIcon />
