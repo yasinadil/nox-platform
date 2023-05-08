@@ -318,8 +318,10 @@ function Issue() {
                       isloading(true);
                       setTimeout(async () => {
                         await findUserKey(e.target.value);
-                        isloading(false);
                       }, 1000);
+                      setTimeout(async () => {
+                        isloading(false);
+                      }, 500);
                     }}
                     placeholder="Enter issuee wallet address"
                     required
